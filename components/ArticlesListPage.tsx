@@ -63,12 +63,12 @@ const ArticlesListPage: React.FC = () => {
 
         const script = document.createElement('script');
         script.src = "https://giscus.app/client.js";
-        script.setAttribute("data-repo", "joseluizmed/tempodeatestadobase");
+        script.setAttribute("data-repo", "joseluizmed/tempodeatestadonovo2");
         script.setAttribute("data-repo-id", "R_kgDOPP5azg");
         script.setAttribute("data-category", "Announcements");
         script.setAttribute("data-category-id", "DIC_kwDOPP5azs4CtPj3");
-        script.setAttribute("data-mapping", "pathname");
-        script.setAttribute("data-strict", "0");
+        script.setAttribute("data-mapping", "url");
+        script.setAttribute("data-strict", "1");
         script.setAttribute("data-reactions-enabled", "1");
         script.setAttribute("data-emit-metadata", "0");
         script.setAttribute("data-input-position", "bottom");
