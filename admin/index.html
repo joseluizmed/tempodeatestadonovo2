@@ -84,6 +84,14 @@
       border-radius: 8px;
       margin-top: 1.5rem;
     }
+    .warning {
+      background-color: #fff5f5;
+      border: 1px solid #fc8181;
+      color: #c53030;
+      padding: 1rem 1.5rem;
+      border-radius: 8px;
+      margin: 1.5rem 0;
+    }
     ol, ul {
       padding-left: 2rem;
     }
@@ -97,9 +105,13 @@
     <h1>Guia para Adicionar Novos Artigos</h1>
     <p>O processo para adicionar novos artigos agora é bem mais simples e direto, totalmente integrado ao seu fluxo de trabalho com o GitHub. Você não precisa mais do Netlify CMS. Aqui está o passo a passo detalhado:</p>
 
+    <div class="warning">
+      <p><strong>Aviso Importante:</strong> A pasta para os artigos deve se chamar <code>artigos</code> (sem o sublinhado). Pastas que começam com <code>_</code> (como <code>_artigos</code>) são frequentemente ignoradas por serviços de hospedagem como o Netlify, o que impede que os artigos sejam publicados. Por favor, certifique-se de usar a pasta <code>/artigos/</code>.</p>
+    </div>
+
     <h2>Passo 1: Crie o arquivo do artigo</h2>
     <ol>
-      <li>No seu projeto (no seu computador ou diretamente no GitHub), navegue até a pasta <code>/_artigos/</code>.</li>
+      <li>No seu projeto (no seu computador ou diretamente no GitHub), navegue até a pasta <code>/artigos/</code>.</li>
       <li>Dentro desta pasta, crie um novo arquivo de texto. O nome do arquivo será usado na URL. Por exemplo, se você criar <code>meu-novo-artigo.md</code>, o link será <code>.../artigos/meu-novo-artigo</code>. Use nomes simples, em letras minúsculas e separe as palavras com hífens.</li>
       <li>A extensão do arquivo deve ser <code>.md</code> (Markdown).</li>
     </ol>
@@ -139,7 +151,7 @@ Você pode usar a sintaxe Markdown para formatar seu texto. Por exemplo, dois si
     <h2>Passo 3: Atualize o "índice" de artigos</h2>
     <p>Este é o passo final e mais importante para que seu artigo apareça na lista.</p>
     <ol>
-      <li>Abra o arquivo <code>/_artigos/index.json</code>.</li>
+      <li>Abra o arquivo <code>/artigos/index.json</code>.</li>
       <li>Você verá uma estrutura parecida com esta:
         <pre><code>[
   {
