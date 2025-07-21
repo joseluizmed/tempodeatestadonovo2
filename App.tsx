@@ -1,3 +1,4 @@
+
 import React, { useState, useCallback, useEffect } from 'react';
 import { HashRouter, Routes, Route, Link } from 'react-router-dom';
 import { MedicalCertificate, AnalysisResults, CertificateStatus, DetailedTimelineSegment, DateInputType } from './types';
@@ -7,6 +8,9 @@ import { AboutPage, PrivacyPolicyPage, ContactPage, INSSPage } from './component
 import Header from './components/Header';
 import InssGuideModal from './components/InssGuideModal';
 import InssActionCard from './components/InssActionCard';
+import AdSense from './components/AdSense';
+import ArticlesListPage from './components/ArticlesListPage';
+import ArticlePage from './components/ArticlePage';
 import { parseDateString, formatDate, addDays, differenceInDays } from './utils/dateUtils';
 
 const App: React.FC = () => {
@@ -267,69 +271,79 @@ const App: React.FC = () => {
   const certificateToEdit = editingCertificateId ? rawCertificates.find(c => c.id === editingCertificateId) : null;
 
   const HomePage = () => (
-    <div className="container mx-auto px-2 sm:px-4 py-8">
-      <div className="flex flex-col lg:flex-row gap-8">
-        <div className="lg:w-1/3">
-          <CertificateForm 
-            onSaveCertificate={handleSaveCertificate}
-            editingCertificate={certificateToEdit || null}
-            onCancelEdit={handleCancelEdit}
-          />
-           <div className="mt-8 p-4 bg-gray-50 border border-gray-200 rounded-lg text-center">
-             <h3 className="font-semibold text-gray-700 mb-2">Espaço para Anúncio</h3>
-             <div className="w-full h-40 md:h-60 bg-gray-200 flex items-center justify-center text-gray-400 rounded">
-               (Ex: Google AdSense 300x250)
-             </div>
-           </div>
-        </div>
-        <div className="lg:w-2/3">
-          <div className="space-y-8">
-            <AnalysisDisplay
-              certificates={processedCertificatesForDisplay} 
-              analysisResults={analysisResults}
-              onRemoveCertificate={handleRemoveCertificate}
-              onEditCertificate={handleStartEdit}
-              onNewAnalysis={handleNewAnalysis}
-            />
-            <InssActionCard 
-              analysisResults={analysisResults} 
-              onOpenGuide={() => setGuideModalOpen(true)} 
-            />
-          </div>
+    <>
+      <div className="bg-blue-600 text-white py-12 px-4 text-center shadow-inner">
+        <div className="container mx-auto">
+            <h1 className="text-4xl md:text-5xl font-bold">Tempo de Atestado</h1>
+            <p className="text-lg mt-2 opacity-90 max-w-3xl mx-auto">
+              Calcule períodos efetivamente cobertos a partir de atestados concedidos, identifique sobreposições e eventuais dias não cobertos entre os afastamentos.
+            </p>
         </div>
       </div>
-      
-      <section className="mt-12 py-8 px-6 bg-white shadow-lg rounded-lg border border-gray-200">
-        <h2 className="text-2xl font-semibold text-gray-700 mb-6 pb-3 border-b border-gray-300">🧭 Informações sobre o uso da ferramenta</h2>
-        <div className="prose prose-lg max-w-none text-gray-700 space-y-4">
-            <p>Esta aplicação foi desenvolvida para facilitar o cálculo e a visualização dos períodos de afastamento médico de forma clara e automatizada. O uso é simples e intuitivo, pensado para atender tanto o público geral quanto profissionais da área.</p>
-            
-            <h3>🔹 Como utilizar</h3>
-            <ul>
-                <li><strong>Adicionar/Editar Atestado:</strong> Informe a data de início e, em seguida, escolha entre indicar a data de término ou a quantidade de dias de afastamento. Clique em "Adicionar" ou pressione a tecla "Enter" para incluir um novo atestado ou "Salvar Alterações" para atualizar um registro existente.</li>
-                <li><strong>Análise Automática:</strong> Os dados são processados automaticamente, exibindo o total de dias, o maior afastamento contínuo e a visualização na linha do tempo.</li>
-                <li>
-                    <strong>Linha do Tempo:</strong>
-                    <ul>
-                        <li>🟩 Verde – Dias cobertos por um único atestado.</li>
-                        <li>🟨 Amarelo – Dias com sobreposição de atestados.</li>
-                        <li>🟥 Vermelho – Dias não cobertos entre afastamentos.</li>
-                        <li>🔷 Borda Azul – Indica o maior afastamento contínuo.</li>
-                    </ul>
-                </li>
-                <li><strong>Atestados Registrados:</strong> Visualize todos os atestados em uma tabela interativa, com opção de edição ou exclusão. A classificação (Contínuo, Não Contínuo etc.) é gerada com base na ordem cronológica.</li>
-                <li><strong>Nova Análise:</strong> Clique neste botão para limpar os dados e iniciar uma nova simulação.</li>
-            </ul>
-
-            <h3>⚠️ Atenção</h3>
-            <ul>
-                <li>O cálculo inclui tanto a data de início quanto a data de término. Exemplo: 01/01 a 05/01 = 5 dias.</li>
-                <li>A continuidade considera atestados que se sucedem sem interrupção entre as datas.</li>
-                <li>Esta ferramenta tem caráter informativo e não substitui a análise de profissionais especializados (como médicos peritos, setores de RH ou assessoria jurídica). Normas específicas podem variar conforme o contexto e a legislação vigente.</li>
-            </ul>
+      <div className="container mx-auto px-2 sm:px-4 py-8">
+        <div className="flex flex-col lg:flex-row gap-8">
+          <div className="lg:w-1/3">
+            <CertificateForm 
+              onSaveCertificate={handleSaveCertificate}
+              editingCertificate={certificateToEdit || null}
+              onCancelEdit={handleCancelEdit}
+            />
+             <div className="mt-8">
+               <AdSense
+                 adClient="ca-pub-2071700067184743"
+                 adSlot="YOUR_AD_SLOT_ID_HERE" // O usuário deve substituir este valor
+               />
+             </div>
+          </div>
+          <div className="lg:w-2/3">
+            <div className="space-y-8">
+              <AnalysisDisplay
+                certificates={processedCertificatesForDisplay} 
+                analysisResults={analysisResults}
+                onRemoveCertificate={handleRemoveCertificate}
+                onEditCertificate={handleStartEdit}
+                onNewAnalysis={handleNewAnalysis}
+              />
+              <InssActionCard 
+                analysisResults={analysisResults} 
+                onOpenGuide={() => setGuideModalOpen(true)} 
+              />
+            </div>
+          </div>
         </div>
-      </section>
-    </div>
+        
+        <section className="mt-12 py-8 px-6 bg-white shadow-lg rounded-lg border border-gray-200">
+          <h2 className="text-2xl font-semibold text-gray-700 mb-6 pb-3 border-b border-gray-300">🧭 Informações sobre o uso da ferramenta</h2>
+          <div className="prose prose-lg max-w-none text-gray-700 space-y-4">
+              <p>Esta aplicação foi desenvolvida para facilitar o cálculo e a visualização dos períodos de afastamento médico de forma clara e automatizada. O uso é simples e intuitivo, pensado para atender tanto o público geral quanto profissionais da área.</p>
+              
+              <h3>🔹 Como utilizar</h3>
+              <ul>
+                  <li><strong>Adicionar/Editar Atestado:</strong> Informe a data de início e, em seguida, escolha entre indicar a data de término ou a quantidade de dias de afastamento. Clique em "Adicionar" ou pressione a tecla "Enter" para incluir um novo atestado ou "Salvar Alterações" para atualizar um registro existente.</li>
+                  <li><strong>Análise Automática:</strong> Os dados são processados automaticamente, exibindo o total de dias, o maior afastamento contínuo e a visualização na linha do tempo.</li>
+                  <li>
+                      <strong>Linha do Tempo:</strong>
+                      <ul>
+                          <li>🟩 Verde – Dias cobertos por um único atestado.</li>
+                          <li>🟨 Amarelo – Dias com sobreposição de atestados.</li>
+                          <li>🟥 Vermelho – Dias não cobertos entre afastamentos.</li>
+                          <li>🔷 Borda Azul – Indica o maior afastamento contínuo.</li>
+                      </ul>
+                  </li>
+                  <li><strong>Atestados Registrados:</strong> Visualize todos os atestados em uma tabela interativa, com opção de edição ou exclusão. A classificação (Contínuo, Não Contínuo etc.) é gerada com base na ordem cronológica.</li>
+                  <li><strong>Nova Análise:</strong> Clique neste botão para limpar os dados e iniciar uma nova simulação.</li>
+              </ul>
+
+              <h3>⚠️ Atenção</h3>
+              <ul>
+                  <li>O cálculo inclui tanto a data de início quanto a de término. Exemplo: 01/01 a 05/01 = 5 dias.</li>
+                  <li>A continuidade considera atestados que se sucedem sem interrupção entre as datas.</li>
+                  <li>Esta ferramenta tem caráter informativo e não substitui a análise de profissionais especializados (como médicos peritos, setores de RH ou assessoria jurídica). Normas específicas podem variar conforme o contexto e a legislação vigente.</li>
+              </ul>
+          </div>
+        </section>
+      </div>
+    </>
   );
 
   return (
@@ -343,6 +357,8 @@ const App: React.FC = () => {
             <Route path="/politica-de-privacidade" element={<PrivacyPolicyPage />} />
             <Route path="/contato" element={<ContactPage />} />
             <Route path="/beneficio-inss" element={<INSSPage onOpenGuide={() => setGuideModalOpen(true)} />} />
+            <Route path="/artigos" element={<ArticlesListPage />} />
+            <Route path="/artigos/:slug" element={<ArticlePage />} />
           </Routes>
         </main>
 
@@ -360,6 +376,8 @@ const App: React.FC = () => {
               <Link to="/" className="px-3 py-1 hover:text-white hover:bg-gray-700 rounded-md transition-colors duration-150">Início</Link>
               <span className="text-gray-500 hidden md:inline">&middot;</span>
               <Link to="/sobre" className="px-3 py-1 hover:text-white hover:bg-gray-700 rounded-md transition-colors duration-150">Sobre</Link>
+              <span className="text-gray-500 hidden md:inline">&middot;</span>
+              <Link to="/artigos" className="px-3 py-1 hover:text-white hover:bg-gray-700 rounded-md transition-colors duration-150">Perícia Médica [Dúvidas e Respostas]</Link>
               <span className="text-gray-500 hidden md:inline">&middot;</span>
               <Link to="/beneficio-inss" className="px-3 py-1 hover:text-white hover:bg-gray-700 rounded-md transition-colors duration-150">Benefício INSS</Link>
               <span className="text-gray-500 hidden md:inline">&middot;</span>

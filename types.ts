@@ -1,3 +1,4 @@
+
 export interface MedicalCertificate {
   id: string;
   displayId: number;
@@ -48,4 +49,17 @@ export interface AnalysisResults {
 export enum DateInputType {
   END_DATE = "endDate",
   DAYS_OFF = "daysOff",
+}
+
+export interface Article {
+  slug: string;
+  title: string;
+  publish_date: string;
+  author: string;
+  image?: string;
+  summary?: string;
+}
+
+export interface ArticleDetails extends Article {
+  body: string;
 }
