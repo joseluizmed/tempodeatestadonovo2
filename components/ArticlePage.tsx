@@ -21,21 +21,10 @@ const ArticlePage: React.FC = () => {
 
         const fetchArticle = async () => {
             try {
-                const pathsToTry = [`artigos/${slug}.md`, `_artigos/${slug}.md`];
-                let response: Response | null = null;
-
-                for (const path of pathsToTry) {
-                    const res = await fetch(`${path}?v=${new Date().getTime()}`);
-                    if (res.ok) {
-                        response = res;
-                        break;
-                    }
+                const response = await fetch(`/artigos/${slug}.md`);
+                if (!response.ok) {
+                    throw new Error('Artigo não encontrado. Verifique o nome do arquivo e se ele existe na pasta `artigos`.');
                 }
-                
-                if (!response) {
-                    throw new Error('Artigo não encontrado. Verifique o nome do arquivo e se ele existe na pasta `artigos` ou `_artigos`.');
-                }
-
                 const rawContent = await response.text();
                 const parsedArticle = parseMarkdown(slug, rawContent);
                 if (!parsedArticle) {

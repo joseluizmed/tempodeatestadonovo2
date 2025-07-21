@@ -21,27 +21,15 @@ const ArticlesListPage: React.FC = () => {
     useEffect(() => {
         const fetchArticles = async () => {
             try {
-                const pathsToTry = ['artigos/index.json', '_artigos/index.json'];
-                let response: Response | null = null;
-                
-                for (const path of pathsToTry) {
-                    // Use relative paths, safe with HashRouter and more robust
-                    const res = await fetch(`${path}?v=${new Date().getTime()}`);
-                    if (res.ok) {
-                        response = res;
-                        break;
-                    }
+                const response = await fetch('/artigos/index.json');
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
                 }
-
-                if (!response) {
-                    throw new Error('404 Not Found');
-                }
-                
                 const data: Article[] = await response.json();
                 data.sort((a, b) => new Date(b.publish_date).getTime() - new Date(a.publish_date).getTime());
                 setArticles(data);
             } catch (e: any) {
-                setError('Não foi possível carregar os artigos. Verifique se o arquivo `artigos/index.json` ou `_artigos/index.json` existe e está acessível.');
+                setError('Não foi possível carregar os artigos. Verifique se o arquivo /artigos/index.json existe e está acessível.');
                 console.error(e);
             } finally {
                 setLoading(false);
