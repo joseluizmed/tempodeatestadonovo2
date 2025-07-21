@@ -56,8 +56,8 @@ export interface Article {
   title: string;
   publish_date: string;
   author: string;
-  image: string;
-  summary: string;
+  image?: string;
+  summary?: string;
 }
 
 export interface ArticleDetails extends Article {
