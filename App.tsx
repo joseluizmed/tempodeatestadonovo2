@@ -291,7 +291,7 @@ const App: React.FC = () => {
              <div className="mt-8">
                <AdSense
                  adClient="ca-pub-2071700067184743"
-                 adSlot="YOUR_AD_SLOT_ID_HERE" // O usuário deve substituir este valor
+                 adSlot="YOUR_AD_SLOT_ID_HERE_SIDEBAR"
                />
              </div>
           </div>
@@ -342,6 +342,12 @@ const App: React.FC = () => {
               </ul>
           </div>
         </section>
+        <div className="my-8">
+            <AdSense
+                adClient="ca-pub-2071700067184743"
+                adSlot="YOUR_AD_SLOT_ID_HERE_BOTTOM"
+            />
+        </div>
       </div>
     </>
   );

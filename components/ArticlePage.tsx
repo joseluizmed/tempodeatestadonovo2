@@ -4,6 +4,7 @@ import { useParams, Link } from 'react-router-dom';
 import { marked } from 'marked';
 import { ArticleDetails } from '../types';
 import { parseMarkdown } from '../utils/markdownParser';
+import AdSense from './AdSense';
 
 const ArticlePage: React.FC = () => {
     const { slug } = useParams<{ slug: string }>();
@@ -114,8 +115,15 @@ const ArticlePage: React.FC = () => {
                                 </div>
                                 <div dangerouslySetInnerHTML={{ __html: article.body }} />
                             </article>
+                            
+                            <div className="my-12">
+                                <AdSense
+                                    adClient="ca-pub-2071700067184743"
+                                    adSlot="YOUR_AD_SLOT_ID_HERE_ARTICLE_DETAIL"
+                                />
+                            </div>
 
-                            <div className="mt-12 pt-8 border-t border-gray-300">
+                            <div className="pt-8 border-t border-gray-300">
                                 <h2 className="text-2xl font-semibold text-gray-800 mb-4">Comentários</h2>
                                 <div id="area-comentarios" ref={commentsContainerRef}>
                                     <div className="text-gray-600 bg-gray-100 p-4 rounded-md animate-pulse">Carregando comentários...</div>

@@ -16,29 +16,29 @@ interface AdSenseProps {
 
 const AdSense: React.FC<AdSenseProps> = ({ adClient, adSlot, style, className }) => {
   useEffect(() => {
-    // Nós só queremos carregar o anúncio se o 'adSlot' for real.
-    if (adSlot && adSlot !== 'YOUR_AD_SLOT_ID_HERE') {
+    // We only want to load the ad if the 'adSlot' is a real value.
+    if (adSlot && !adSlot.startsWith('YOUR_AD_SLOT_ID_HERE')) {
       try {
         (window.adsbygoogle = window.adsbygoogle || []).push({});
       } catch (err) {
-        console.error('Erro no AdSense:', err);
+        console.error('AdSense Error:', err);
       }
     }
-  }, [adSlot]); // Executa o efeito novamente se o adSlot mudar
+  }, [adSlot]); // Rerun the effect if the adSlot changes
 
-  // Exibe uma mensagem de placeholder se o 'adSlot' não estiver configurado.
-  // Isso ajuda o desenvolvedor (usuário) a entender o que fazer a seguir.
-  if (!adSlot || adSlot === 'YOUR_AD_SLOT_ID_HERE') {
+  // Display a placeholder if the 'adSlot' is not configured.
+  // This helps the developer (user) understand what to do next.
+  if (!adSlot || adSlot.startsWith('YOUR_AD_SLOT_ID_HERE')) {
     return (
       <div className="w-full min-h-[250px] bg-yellow-100 border-2 border-dashed border-yellow-400 flex flex-col items-center justify-center text-yellow-800 rounded-lg p-4 text-center">
         <span className="font-bold text-lg mb-2">Anúncio do Google AdSense</span>
-        <p className="text-sm">Para exibir anúncios, substitua o valor de <strong>"YOUR_AD_SLOT_ID_HERE"</strong> pela sua ID de Bloco de Anúncios no arquivo <code>App.tsx</code>.</p>
-        <p className="text-xs mt-2">Você pode obter esta ID em sua conta do AdSense.</p>
+        <p className="text-sm">Para exibir um anúncio aqui, substitua o valor de <strong>adSlot</strong> por sua ID de Bloco de Anúncios real.</p>
+        <p className="text-xs mt-2">Você pode obter esta ID em sua conta do AdSense. O slot atual é: <strong>"{adSlot}"</strong>.</p>
       </div>
     );
   }
 
-  // Renderiza o bloco de anúncios real se o 'adSlot' estiver configurado.
+  // Render the real ad unit if the 'adSlot' is configured.
   return (
     <div className={className} style={{ ...style, overflow: 'hidden', minHeight: '250px' }}>
       <ins

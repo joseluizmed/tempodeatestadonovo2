@@ -2,6 +2,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { Article } from '../types';
+import AdSense from './AdSense';
 
 const PageContainer: React.FC<{title: string; children: React.ReactNode}> = ({ title, children }) => (
     <div className="max-w-5xl mx-auto p-4 md:p-8 bg-gray-50">
@@ -105,13 +106,27 @@ const ArticlesListPage: React.FC = () => {
             )}
             
             {!loading && (
-                 <div className="mt-12 pt-8 border-t border-gray-300">
-                    <h2 className="text-2xl font-semibold text-gray-800 mb-4">Discussões e Dúvidas Gerais</h2>
-                    <p className="mb-4 text-gray-600">Tem alguma dúvida geral sobre perícia médica ou algum tema que não foi abordado nos artigos? Use o espaço abaixo para perguntar e interagir com a comunidade.</p>
-                    <div id="giscus-container" ref={giscusContainerRef}>
-                        <div className="text-gray-600 bg-gray-100 p-4 rounded-md animate-pulse">Carregando comentários...</div>
+                <>
+                    <div className="my-12">
+                        <AdSense
+                            adClient="ca-pub-2071700067184743"
+                            adSlot="YOUR_AD_SLOT_ID_HERE_ARTICLES_LIST"
+                        />
                     </div>
-               </div>
+                    <div className="pt-8 border-t border-gray-300">
+                        <h2 className="text-2xl font-semibold text-gray-800 mb-4">Discussões e Dúvidas Gerais</h2>
+                        <p className="mb-4 text-gray-600">Tem alguma dúvida geral sobre perícia médica ou algum tema que não foi abordado nos artigos? Use o espaço abaixo para perguntar e interagir com a comunidade.</p>
+                        <div id="giscus-container" ref={giscusContainerRef}>
+                            <div className="text-gray-600 bg-gray-100 p-4 rounded-md animate-pulse">Carregando comentários...</div>
+                        </div>
+                   </div>
+                </>
+            )}
+
+            {!loading && (
+                <Link to="/" className="inline-block mt-8 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-md shadow-md transition duration-150 ease-in-out transform hover:scale-105">
+                    Voltar para a página inicial
+                </Link>
             )}
         </PageContainer>
     );
