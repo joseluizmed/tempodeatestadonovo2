@@ -1,8 +1,8 @@
-
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Article } from '../types';
 import AdSense from './AdSense';
+import CommunityOrAIAssistant from './CommunityOrAIAssistant';
 
 const PageContainer: React.FC<{title: string; children: React.ReactNode}> = ({ title, children }) => (
     <div className="max-w-5xl mx-auto p-4 md:p-8 bg-gray-50">
@@ -35,7 +35,6 @@ const ArticlesListPage: React.FC = () => {
     const [articles, setArticles] = useState<Article[]>([]);
     const [loading, setLoading] = useState<boolean>(true);
     const [error, setError] = useState<string | null>(null);
-    const giscusContainerRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
         const fetchArticles = async () => {
@@ -56,38 +55,6 @@ const ArticlesListPage: React.FC = () => {
         };
         fetchArticles();
     }, []);
-
-    useEffect(() => {
-        if (loading || !giscusContainerRef.current) {
-            return;
-        }
-
-        const script = document.createElement('script');
-        script.src = "https://giscus.app/client.js";
-        script.setAttribute("data-repo", "joseluizmed/tempodeatestadonovo2");
-        script.setAttribute("data-repo-id", "R_kgDOPP5azg");
-        script.setAttribute("data-category", "Announcements");
-        script.setAttribute("data-category-id", "DIC_kwDOPP5azs4CtPj3");
-        script.setAttribute("data-mapping", "url");
-        script.setAttribute("data-strict", "1");
-        script.setAttribute("data-reactions-enabled", "1");
-        script.setAttribute("data-emit-metadata", "0");
-        script.setAttribute("data-input-position", "bottom");
-        script.setAttribute("data-theme", "light");
-        script.setAttribute("data-lang", "pt");
-        script.setAttribute("crossorigin", "anonymous");
-        script.async = true;
-
-        const container = giscusContainerRef.current;
-        container.innerHTML = "";
-        container.appendChild(script);
-
-        return () => {
-            if (container) {
-                container.innerHTML = "";
-            }
-        };
-    }, [loading]);
 
     return (
         <PageContainer title="Perícia Médica [Dúvidas e Respostas]">
@@ -113,13 +80,9 @@ const ArticlesListPage: React.FC = () => {
                             adSlot="YOUR_AD_SLOT_ID_HERE_ARTICLES_LIST"
                         />
                     </div>
-                    <div className="pt-8 border-t border-gray-300">
-                        <h2 className="text-2xl font-semibold text-gray-800 mb-4">Discussões e Dúvidas Gerais</h2>
-                        <p className="mb-4 text-gray-600">Tem alguma dúvida geral sobre perícia médica ou algum tema que não foi abordado nos artigos? Use o espaço abaixo para perguntar e interagir com a comunidade.</p>
-                        <div id="giscus-container" ref={giscusContainerRef}>
-                            <div className="text-gray-600 bg-gray-100 p-4 rounded-md animate-pulse">Carregando comentários...</div>
-                        </div>
-                   </div>
+                    <div className="pt-8 mt-12 border-t border-gray-300">
+                        <CommunityOrAIAssistant />
+                    </div>
                 </>
             )}
 

@@ -1,17 +1,16 @@
-
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { marked } from 'marked';
 import { ArticleDetails } from '../types';
 import { parseMarkdown } from '../utils/markdownParser';
 import AdSense from './AdSense';
+import CommunityOrAIAssistant from './CommunityOrAIAssistant';
 
 const ArticlePage: React.FC = () => {
     const { slug } = useParams<{ slug: string }>();
     const [article, setArticle] = useState<ArticleDetails | null>(null);
     const [loading, setLoading] = useState<boolean>(true);
     const [error, setError] = useState<string | null>(null);
-    const commentsContainerRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
         if (!slug) {
@@ -44,37 +43,6 @@ const ArticlePage: React.FC = () => {
         };
         fetchArticle();
     }, [slug]);
-
-    useEffect(() => {
-        if (loading || error || !commentsContainerRef.current) {
-            return;
-        }
-
-        const script = document.createElement('script');
-        script.src = "https://giscus.app/client.js";
-        script.setAttribute("data-repo", "joseluizmed/tempodeatestadonovo2");
-        script.setAttribute("data-repo-id", "R_kgDOPP5azg");
-        script.setAttribute("data-category", "Announcements");
-        script.setAttribute("data-category-id", "DIC_kwDOPP5azs4CtPj3");
-        script.setAttribute("data-mapping", "url");
-        script.setAttribute("data-strict", "1");
-        script.setAttribute("data-reactions-enabled", "1");
-        script.setAttribute("data-emit-metadata", "0");
-        script.setAttribute("data-input-position", "bottom");
-        script.setAttribute("data-theme", "light");
-        script.setAttribute("data-lang", "pt");
-        script.setAttribute("crossorigin", "anonymous");
-        script.async = true;
-
-        commentsContainerRef.current.innerHTML = "";
-        commentsContainerRef.current.appendChild(script);
-
-        return () => {
-            if (commentsContainerRef.current) {
-                commentsContainerRef.current.innerHTML = "";
-            }
-        };
-    }, [loading, error]);
 
     if (loading) {
         return (
@@ -123,11 +91,8 @@ const ArticlePage: React.FC = () => {
                                 />
                             </div>
 
-                            <div className="pt-8 border-t border-gray-300">
-                                <h2 className="text-2xl font-semibold text-gray-800 mb-4">Comentários</h2>
-                                <div id="area-comentarios" ref={commentsContainerRef}>
-                                    <div className="text-gray-600 bg-gray-100 p-4 rounded-md animate-pulse">Carregando comentários...</div>
-                                </div>
+                            <div className="pt-8 mt-12 border-t border-gray-300">
+                                <CommunityOrAIAssistant contextTitle={article.title} />
                             </div>
 
                             <Link to="/artigos" className="inline-block mt-8 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-md shadow-md transition duration-150 ease-in-out transform hover:scale-105 no-underline">
