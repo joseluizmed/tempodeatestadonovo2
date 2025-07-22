@@ -39,7 +39,7 @@ const ArticlesListPage: React.FC = () => {
     useEffect(() => {
         const fetchArticles = async () => {
             try {
-                const response = await fetch('/artigos/index.json');
+                const response = await fetch('./artigos/index.json');
                 if (!response.ok) {
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }
@@ -47,7 +47,7 @@ const ArticlesListPage: React.FC = () => {
                 data.sort((a, b) => new Date(b.publish_date).getTime() - new Date(a.publish_date).getTime());
                 setArticles(data);
             } catch (e: any) {
-                setError('Não foi possível carregar os artigos. Verifique se o arquivo /artigos/index.json existe e está acessível no seu site publicado.');
+                setError('Não foi possível carregar os artigos. Verifique se o arquivo de listagem de artigos existe e está acessível no seu site publicado.');
                 console.error(e);
             } finally {
                 setLoading(false);

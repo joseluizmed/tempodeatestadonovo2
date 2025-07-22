@@ -5,8 +5,5 @@
   "dependencies": {
     "@google/genai": "^0.15.0",
     "marked": "^13.0.0"
-  },
-  "scripts": {
-    "build": "echo \"Build step not required. Publish settings are configured in netlify.toml\""
   }
 }

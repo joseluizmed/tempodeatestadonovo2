@@ -21,9 +21,9 @@ const ArticlePage: React.FC = () => {
 
         const fetchArticle = async () => {
             try {
-                const response = await fetch(`/artigos/${slug}.md`);
+                const response = await fetch(`./artigos/${slug}.md`);
                 if (!response.ok) {
-                    throw new Error('Artigo não encontrado. Verifique o slug na URL e se o arquivo .md correspondente existe na pasta `/artigos` do seu site.');
+                    throw new Error('Artigo não encontrado. Verifique o slug na URL e se o arquivo .md correspondente existe na pasta de artigos do seu site.');
                 }
                 const rawContent = await response.text();
                 const parsedArticle = parseMarkdown(slug, rawContent);
