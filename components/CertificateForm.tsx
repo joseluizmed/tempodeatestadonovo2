@@ -1,7 +1,6 @@
 import React, { useState, useCallback, useRef, useEffect } from 'react';
 import { MedicalCertificate, DateInputType } from '../types';
 import { parseDateString, addDays, differenceInDays, formatDate, formatInputDate } from '../utils/dateUtils';
-import Tooltip from './Tooltip';
 
 interface CertificateFormProps {
   onSaveCertificate: (

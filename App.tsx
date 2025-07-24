@@ -1,7 +1,8 @@
 
+
 import React, { useState, useCallback, useEffect } from 'react';
 import { HashRouter, Routes, Route, Link } from 'react-router-dom';
-import { MedicalCertificate, AnalysisResults, CertificateStatus, DetailedTimelineSegment, DateInputType } from './types';
+import { MedicalCertificate, AnalysisResults, CertificateStatus, DetailedTimelineSegment } from './types';
 import CertificateForm from './components/CertificateForm';
 import AnalysisDisplay from './components/AnalysisDisplay';
 import { AboutPage, PrivacyPolicyPage, ContactPage, INSSPage } from './components/StaticPages';
@@ -11,7 +12,7 @@ import InssActionCard from './components/InssActionCard';
 import AdSense from './components/AdSense';
 import ArticlesListPage from './components/ArticlesListPage';
 import ArticlePage from './components/ArticlePage';
-import { parseDateString, formatDate, addDays, differenceInDays } from './utils/dateUtils';
+import { formatDate, addDays, differenceInDays } from './utils/dateUtils';
 
 const App: React.FC = () => {
   const [rawCertificates, setRawCertificates] = useState<MedicalCertificate[]>([]);
