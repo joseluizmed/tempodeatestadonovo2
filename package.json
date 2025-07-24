@@ -1,26 +1,12 @@
-
 {
   "name": "tempo-de-atestado-app",
   "version": "1.0.0",
   "private": true,
-  "type": "module",
-  "scripts": {
-    "dev": "vite",
-    "build": "tsc && vite build",
-    "preview": "vite preview"
-  },
   "dependencies": {
     "@google/genai": "^0.15.0",
-    "marked": "^13.0.0",
-    "react": "^19.1.0",
-    "react-dom": "^19.1.0",
-    "react-router-dom": "^6.24.1"
+    "marked": "^13.0.0"
   },
-  "devDependencies": {
-    "@types/react": "^18.3.3",
-    "@types/react-dom": "^18.3.0",
-    "@vitejs/plugin-react": "^4.3.1",
-    "typescript": "^5.5.3",
-    "vite": "^5.3.3"
+  "scripts": {
+    "build": "echo \"Build step not required. Publish settings are configured in netlify.toml\""
   }
 }
