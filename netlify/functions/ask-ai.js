@@ -1,4 +1,3 @@
-
 import { GoogleGenAI } from "@google/genai";
 import { marked } from "marked";
 
@@ -25,10 +24,8 @@ export const handler = async (event) => {
 
     const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
 
-    // Define the system instruction, which guides the AI's persona and response format.
     const systemInstruction = `Você é um assistente virtual especialista em perícia médica e benefícios do INSS, baseado nos conhecimentos e experiência do Dr. José Luiz de Souza Neto. Seu propósito é fornecer informações claras, objetivas e úteis para trabalhadores e segurados. Responda exclusivamente em português do Brasil. Formate suas respostas usando Markdown. Seja conciso e direto. Nunca se apresente, apenas forneça a resposta.`;
     
-    // The user's prompt is kept separate from the system instruction.
     let userPrompt = question;
     if (contextTitle) {
       userPrompt = `Dentro do contexto do artigo "${contextTitle}", responda à seguinte pergunta: "${question}"`;
@@ -36,13 +33,20 @@ export const handler = async (event) => {
 
     const response = await ai.models.generateContent({
         model: 'gemini-2.5-flash',
-        contents: userPrompt, // Pass only the user's prompt here.
+        contents: userPrompt,
         config: {
-            systemInstruction: systemInstruction, // Use the dedicated parameter for system instructions.
+            systemInstruction: systemInstruction,
             temperature: 0.5,
         },
     });
     
+    // Check for blocked prompts before trying to access the text.
+    if (response.promptFeedback?.blockReason) {
+      const reason = response.promptFeedback.blockReason;
+      console.warn(`Prompt blocked due to ${reason}`, response.promptFeedback.safetyRatings);
+      throw new Error(`Sua pergunta foi bloqueada por motivos de segurança (${reason}). Por favor, reformule sua pergunta.`);
+    }
+
     const rawAnswer = response.text;
     if (!rawAnswer) {
       throw new Error("A IA retornou uma resposta vazia. Isso pode ser devido a filtros de segurança ou um problema com a pergunta.");
@@ -58,8 +62,8 @@ export const handler = async (event) => {
 
   } catch (error) {
     console.error('Error in ask-ai function:', error);
-    // Provide a consistent, user-friendly error message.
-    const errorMessage = 'Ocorreu um erro ao processar sua pergunta. Tente novamente.';
+    // Return the actual error message for better frontend feedback.
+    const errorMessage = error instanceof Error ? error.message : 'Ocorreu um erro ao processar sua pergunta. Tente novamente.';
     return {
       statusCode: 500,
       headers: { 'Content-Type': 'application/json' },
