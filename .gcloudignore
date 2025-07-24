@@ -1,0 +1,27 @@
+# Este arquivo diz à ferramenta gcloud o que ignorar ao enviar o código-fonte.
+# É essencial para evitar erros de cota e enviar apenas o necessário.
+
+# A principal causa do erro RESOURCE_EXHAUSTED. Contém milhares de arquivos.
+node_modules/
+
+# O resultado do build. O Google Cloud Build criará isso na nuvem.
+dist/
+
+# Arquivos de log. Nunca devem ser enviados.
+*.log
+
+# Pasta de configuração específica do Netlify. Irrelevante para o Google Cloud.
+netlify/
+
+# Arquivos de ambiente. Contêm chaves secretas e não devem ser enviados.
+.env*
+
+# Arquivos de sistema do macOS.
+.DS_Store
+
+# Pasta do VSCode
+.vscode/
+
+# Arquivos de configuração do Git
+.git/
+.gitignore
