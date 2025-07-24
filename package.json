@@ -2,6 +2,9 @@
   "name": "tempo-de-atestado-app",
   "version": "1.0.0",
   "private": true,
+  "scripts": {
+    "build": "hydrogen build"
+  },
   "dependencies": {
     "@google/genai": "^0.15.0",
     "marked": "^13.0.0"
