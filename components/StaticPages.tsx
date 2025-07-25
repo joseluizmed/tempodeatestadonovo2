@@ -156,10 +156,21 @@ export const INSSPage: React.FC<{onOpenGuide: () => void}> = ({ onOpenGuide }) =
         <h1 className="text-3xl font-bold text-gray-800 mb-6 pb-3 border-b border-gray-300">📄 Benefício por Incapacidade Temporária (Auxílio-Doença)</h1>
         <div className="prose prose-lg max-w-none text-gray-700">
             <section className="mb-6">
-            <h2 className="text-2xl font-semibold text-gray-800 mt-6 mb-3">O que é?</h2>
-            <p>É um benefício devido ao segurado do INSS que comprove, em perícia médica, estar temporariamente incapaz para o trabalho em decorrência de doença ou acidente.</p>
-            <p className="mt-2">A regra geral é que os primeiros 15 dias de afastamento são pagos pela empresa. A partir do 16º dia, a responsabilidade do pagamento passa a ser do INSS, desde que o benefício seja requerido e aprovado.</p>
+              <h2 className="text-2xl font-semibold text-gray-800 mt-6 mb-3">O que é?</h2>
+              <p>É um benefício devido ao segurado do INSS que comprove, em perícia médica, estar temporariamente incapaz para o trabalho em decorrência de doença ou acidente.</p>
+              <p className="mt-2">A regra geral é que os primeiros 15 dias de afastamento são pagos pela empresa. A partir do 16º dia, a responsabilidade do pagamento passa a ser do INSS, desde que o benefício seja requerido e aprovado.</p>
             </section>
+
+            <div className="p-4 rounded-lg bg-yellow-50 border-l-4 border-yellow-400 my-8 not-prose">
+                <h3 className="text-xl font-bold text-yellow-800 mt-0 mb-3 flex items-center">
+                    <span className="text-2xl mr-3">💡</span>Atenção: Início do Benefício
+                </h3>
+                <ul className="list-disc list-inside space-y-2 text-yellow-900">
+                    <li>No caso do <strong>segurado empregado</strong> (trabalhador com carteira assinada), o benefício começa a contar do <strong>16º (décimo sexto) dia</strong> de afastamento do trabalho.</li>
+                    <li>Os primeiros <strong>15 dias</strong> de afastamento do segurado empregado são de responsabilidade da <strong>empresa</strong>, que deve pagar o salário integral.</li>
+                    <li>No caso dos <strong>demais segurados</strong> (contribuinte individual, facultativo, trabalhador avulso, etc.), o benefício contará a partir do <strong>primeiro dia da incapacidade</strong>.</li>
+                </ul>
+            </div>
     
             <section className="mb-6">
             <h2 className="text-2xl font-semibold text-gray-800 mt-6 mb-3">Quem pode utilizar este serviço?</h2>
@@ -172,10 +183,10 @@ export const INSSPage: React.FC<{onOpenGuide: () => void}> = ({ onOpenGuide }) =
             <p className="mt-2 text-sm text-gray-600"><strong>Exceção à Carência:</strong> Não é exigida carência para acidentes de qualquer natureza (incluindo de trabalho), ou para doenças especificadas na lista do Ministério da Saúde e do Trabalho e da Previdência.</p>
             </section>
     
-            <section className="p-4 rounded-lg bg-yellow-50 border-l-4 border-yellow-400 my-8">
-            <h2 className="text-2xl font-semibold text-yellow-800 mt-0 mb-3">🚨 Prazo Crítico para Solicitação</h2>
-            <p className="text-yellow-900">Para garantir que o benefício seja pago desde a data do início do afastamento (o 16º dia), o requerimento deve ser feito <strong>em até 30 dias</strong> após o início da incapacidade.</p>
-            <p className="mt-2 text-yellow-900">Se o pedido for feito após o 30º dia, o pagamento será efetuado a partir da data do requerimento, e não mais da data do afastamento, <strong>resultando em perda financeira.</strong></p>
+            <section className="p-4 rounded-lg bg-red-50 border-l-4 border-red-400 my-8">
+            <h2 className="text-2xl font-semibold text-red-800 mt-0 mb-3">🚨 Prazo Crítico para Solicitação</h2>
+            <p className="text-red-900">Para garantir que o benefício seja pago desde a data do início do afastamento (o 16º dia), o requerimento deve ser feito <strong>em até 30 dias</strong> após o início da incapacidade.</p>
+            <p className="mt-2 text-red-900">Se o pedido for feito após o 30º dia, o pagamento será efetuado a partir da data do requerimento, e não mais da data do afastamento, <strong>resultando em perda financeira.</strong></p>
             </section>
     
             <section className="mb-6">
@@ -215,6 +226,18 @@ export const INSSPage: React.FC<{onOpenGuide: () => void}> = ({ onOpenGuide }) =
                   adSlot="YOUR_AD_SLOT_ID_HERE_INSS"
               />
             </div>
+
+            <details className="mt-8 pt-6 border-t border-gray-200 not-prose">
+                <summary className="text-lg font-semibold text-gray-700 cursor-pointer hover:text-gray-900">
+                    Fundamentação Legal
+                </summary>
+                <div className="mt-4 p-4 bg-gray-50 border border-gray-200 rounded-lg text-sm text-gray-600 space-y-3">
+                    <p><strong>Art. 60, da Lei 8.213/91.</strong> O auxílio-doença será devido ao segurado empregado a contar do décimo sexto dia do afastamento da atividade, e, no caso dos demais segurados, a contar da data do início da incapacidade e enquanto ele permanecer incapaz. (Redação dada pela Lei nº 9.876, de 26.11.99)</p>
+                    <p><strong>§ 1º</strong> Quando requerido por segurado afastado da atividade por mais de 30 (trinta) dias, o auxílio-doença será devido a contar da data da entrada do requerimento.</p>
+                    <p><strong>§ 3º</strong> Durante os primeiros quinze dias consecutivos ao do afastamento da atividade por motivo de doença, incumbirá à empresa pagar ao segurado empregado o seu salário integral. (Redação dada pela Lei nº 9.876, de 26.11.99)</p>
+                    <p><strong>§ 4º</strong> A empresa que dispuser de serviço médico, próprio ou em convênio, terá a seu cargo o exame médico e o abono das faltas correpondentes ao período referido no § 3º, somente devendo encaminhar o segurado à perícia médica da Previdência Social quando a incapacidade ultrapassar 15 (quinze) dias.</p>
+                </div>
+            </details>
         </div>
 
         <div className="mt-8 pt-6 border-t border-gray-300 flex flex-col sm:flex-row gap-4">
