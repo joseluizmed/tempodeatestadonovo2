@@ -1,5 +1,4 @@
 
-
 import React, { useState, useCallback, useEffect } from 'react';
 import { HashRouter, Routes, Route, Link } from 'react-router-dom';
 import { MedicalCertificate, AnalysisResults, CertificateStatus, DetailedTimelineSegment } from './types';
@@ -13,6 +12,7 @@ import AdSense from './components/AdSense';
 import ArticlesListPage from './components/ArticlesListPage';
 import ArticlePage from './components/ArticlePage';
 import { formatDate, addDays, differenceInDays } from './utils/dateUtils';
+import ScrollToTop from './components/ScrollToTop';
 
 const App: React.FC = () => {
   const [rawCertificates, setRawCertificates] = useState<MedicalCertificate[]>([]);
@@ -355,6 +355,7 @@ const App: React.FC = () => {
 
   return (
     <HashRouter>
+      <ScrollToTop />
       <div className="flex flex-col min-h-screen bg-gray-100">
         <Header />
         <main className="flex-grow">
