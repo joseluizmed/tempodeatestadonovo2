@@ -282,6 +282,7 @@ const App: React.FC = () => {
         </div>
       </div>
       <div className="container mx-auto px-2 sm:px-4 py-8">
+        <h1 className="text-3xl md:text-4xl font-bold text-gray-800 mb-8 text-center">Calculadora de Tempo de Afastamento por Atestado Médico</h1>
         <div className="flex flex-col lg:flex-row gap-8">
           <div className="lg:w-1/3">
             <CertificateForm 
@@ -328,7 +329,7 @@ const App: React.FC = () => {
                           <li>🟩 Verde – Dias cobertos por um único atestado.</li>
                           <li>🟨 Amarelo – Dias com sobreposição de atestados.</li>
                           <li>🟥 Vermelho – Dias não cobertos entre afastamentos.</li>
-                          <li>🔷 Borda Azul – Indica o maior afastamento contínuo.</li>
+                          <li>🔷 Borda Azul – Indica o maior afastamento contínuos.</li>
                       </ul>
                   </li>
                   <li><strong>Atestados Registrados:</strong> Visualize todos os atestados em uma tabela interativa, com opção de edição ou exclusão. A classificação (Contínuo, Não Contínuo etc.) é gerada com base na ordem cronológica.</li>
