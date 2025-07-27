@@ -1,6 +1,7 @@
+
+
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import AdSense from './AdSense';
 
 const PageContainer: React.FC<{title: string; children: React.ReactNode}> = ({ title, children }) => (
   <div className="max-w-4xl mx-auto p-6 md:p-10 bg-white shadow-xl rounded-lg my-8 border border-gray-200">
@@ -94,12 +95,6 @@ export const AboutPage: React.FC = () => {
           </div>
         )}
       </div>
-      <div className="my-8 not-prose">
-          <AdSense
-              adClient="ca-pub-2071700067184743"
-              adSlot="YOUR_AD_SLOT_ID_HERE_ABOUT"
-          />
-      </div>
     </PageContainer>
   );
 };
@@ -126,12 +121,6 @@ export const PrivacyPolicyPage: React.FC = () => {
       <p>O Tempo de Atestado tem fins informativos e educacionais. Ele visa auxiliar no cálculo e na visualização de períodos de afastamento. Não substitui aconselhamento médico, jurídico ou pericial profissional. As interpretações e decisões baseadas nos resultados são de responsabilidade do usuário.</p>
       <h3 className="text-xl font-semibold text-gray-800 mt-5 mb-2">Contato:</h3>
       <p>Para dúvidas ou sugestões sobre esta política de privacidade, entre em contato: <a href="mailto:joseluizmed@gmail.com?subject=Política de Privacidade - Tempo de Atestado" className="text-blue-600 hover:underline">joseluizmed@gmail.com</a>.</p>
-      <div className="my-8 not-prose">
-            <AdSense
-                adClient="ca-pub-2071700067184743"
-                adSlot="YOUR_AD_SLOT_ID_HERE_PRIVACY"
-            />
-        </div>
     </PageContainer>
   );
 };
@@ -219,13 +208,6 @@ export const INSSPage: React.FC<{onOpenGuide: () => void}> = ({ onOpenGuide }) =
                 <li><strong>Telefone:</strong> 135 (de segunda a sábado, das 7h às 22h).</li>
             </ul>
             </section>
-
-            <div className="my-8 not-prose">
-              <AdSense
-                  adClient="ca-pub-2071700067184743"
-                  adSlot="YOUR_AD_SLOT_ID_HERE_INSS"
-              />
-            </div>
 
             <details className="mt-8 pt-6 border-t border-gray-200 not-prose">
                 <summary className="text-lg font-semibold text-gray-700 cursor-pointer hover:text-gray-900">

@@ -1,4 +1,5 @@
 
+
 import React, { useState, useCallback, useEffect } from 'react';
 import { HashRouter, Routes, Route, Link } from 'react-router-dom';
 import { MedicalCertificate, AnalysisResults, CertificateStatus, DetailedTimelineSegment } from './types';
@@ -8,7 +9,6 @@ import { AboutPage, PrivacyPolicyPage, ContactPage, INSSPage } from './component
 import Header from './components/Header';
 import InssGuideModal from './components/InssGuideModal';
 import InssActionCard from './components/InssActionCard';
-import AdSense from './components/AdSense';
 import ArticlesListPage from './components/ArticlesListPage';
 import ArticlePage from './components/ArticlePage';
 import { formatDate, addDays, differenceInDays } from './utils/dateUtils';
@@ -290,12 +290,6 @@ const App: React.FC = () => {
               editingCertificate={certificateToEdit || null}
               onCancelEdit={handleCancelEdit}
             />
-             <div className="mt-8">
-               <AdSense
-                 adClient="ca-pub-2071700067184743"
-                 adSlot="YOUR_AD_SLOT_ID_HERE_SIDEBAR"
-               />
-             </div>
           </div>
           <div className="lg:w-2/3">
             <div className="space-y-8">
@@ -344,12 +338,6 @@ const App: React.FC = () => {
               </ul>
           </div>
         </section>
-        <div className="my-8">
-            <AdSense
-                adClient="ca-pub-2071700067184743"
-                adSlot="YOUR_AD_SLOT_ID_HERE_BOTTOM"
-            />
-        </div>
       </div>
     </>
   );
