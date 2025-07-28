@@ -4,8 +4,12 @@ import { parseMarkdown } from '../utils/markdownParser';
 import ArticleList from './ArticleList';
 import ArticleForm from './ArticleForm';
 import GeneratedOutput from './GeneratedOutput';
+import Login from './Login';
 
 const AdminApp: React.FC = () => {
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
+  const [loginError, setLoginError] = useState<string | null>(null);
+
   const [articles, setArticles] = useState<Article[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
@@ -13,7 +17,21 @@ const AdminApp: React.FC = () => {
   const [editingArticle, setEditingArticle] = useState<ArticleDetails | null>(null);
   const [generatedContent, setGeneratedContent] = useState<{ json: string; md?: string; mdFilename?: string, instructions?: string } | null>(null);
 
+  // Check session storage on component mount to keep user logged in
+  useEffect(() => {
+    const storedAuth = sessionStorage.getItem('isAdminAuthenticated');
+    if (storedAuth === 'true') {
+        setIsAuthenticated(true);
+    }
+  }, []);
+
   const fetchArticles = useCallback(async () => {
+    // Only fetch articles if the user is authenticated
+    if (!isAuthenticated) {
+        setLoading(false);
+        return;
+    };
+    
     setLoading(true);
     setError(null);
     try {
@@ -29,11 +47,22 @@ const AdminApp: React.FC = () => {
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [isAuthenticated]);
 
   useEffect(() => {
     fetchArticles();
   }, [fetchArticles]);
+
+  const handleLogin = (password: string) => {
+    if (password === 'MaluZezo') {
+        setIsAuthenticated(true);
+        setLoginError(null);
+        // Save auth state to session storage to persist across reloads for the current session
+        sessionStorage.setItem('isAdminAuthenticated', 'true');
+    } else {
+        setLoginError('Senha incorreta. Tente novamente.');
+    }
+  };
 
   const handleCreate = () => {
     setEditingArticle({
@@ -138,6 +167,12 @@ ${updatedArticle.body}`;
     }
   };
 
+  // Render Login screen if not authenticated
+  if (!isAuthenticated) {
+    return <Login onLogin={handleLogin} error={loginError} />;
+  }
+
+  // Render the admin panel if authenticated
   return (
     <div className="bg-gray-100 min-h-screen">
       <header className="bg-gray-800 text-white shadow-md">
