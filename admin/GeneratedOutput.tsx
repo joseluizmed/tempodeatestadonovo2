@@ -1,4 +1,30 @@
-import React from 'react';
+import React, { useState } from 'react';
+
+// Type definitions for the File System Access API.
+// This prevents TypeScript errors for `window.showSaveFilePicker`, which is not yet
+// included in the standard TypeScript DOM library definitions.
+interface SaveFilePickerOptions {
+    suggestedName?: string;
+    types?: {
+        description?: string;
+        accept?: Record<string, string[]>;
+    }[];
+}
+
+interface FileSystemFileHandle {
+    createWritable(): Promise<FileSystemWritableFileStream>;
+}
+
+interface FileSystemWritableFileStream extends WritableStream {
+    write(data: BlobPart): Promise<void>;
+    close(): Promise<void>;
+}
+
+declare global {
+    interface Window {
+        showSaveFilePicker(options?: SaveFilePickerOptions): Promise<FileSystemFileHandle>;
+    }
+}
 
 interface GeneratedOutputProps {
   content: {
@@ -10,81 +36,136 @@ interface GeneratedOutputProps {
   onBack: () => void;
 }
 
-const CopyButton: React.FC<{ textToCopy: string }> = ({ textToCopy }) => {
-  const [copied, setCopied] = React.useState(false);
+type SaveStatus = 'idle' | 'saving' | 'success' | 'error' | 'cancelled';
 
-  const handleCopy = () => {
-    navigator.clipboard.writeText(textToCopy).then(() => {
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
-    });
-  };
+interface FileSaveButtonProps {
+    fileName: string;
+    fileContent: string;
+    mimeType: string;
+    fileExtension: string;
+    label: string;
+}
 
-  return (
-    <button
-      onClick={handleCopy}
-      className="absolute top-2 right-2 bg-gray-600 hover:bg-gray-700 text-white text-xs font-semibold py-1 px-2 rounded"
-    >
-      {copied ? 'Copiado!' : 'Copiar'}
-    </button>
-  );
+const FileSaveButton: React.FC<FileSaveButtonProps> = ({ fileName, fileContent, mimeType, fileExtension, label }) => {
+    const [status, setStatus] = useState<SaveStatus>('idle');
+    const [errorMessage, setErrorMessage] = useState('');
+
+    const handleSave = async () => {
+        if (typeof window.showSaveFilePicker !== 'function') {
+            setErrorMessage('Seu navegador não suporta esta funcionalidade. Tente usar o Chrome, Edge ou outro navegador compatível.');
+            setStatus('error');
+            return;
+        }
+        
+        setStatus('saving');
+        setErrorMessage('');
+        try {
+            const handle = await window.showSaveFilePicker({
+                suggestedName: fileName,
+                types: [{
+                    description: `Arquivo ${fileName.split('.').pop()?.toUpperCase()}`,
+                    accept: { [mimeType]: [`.${fileExtension}`] },
+                }],
+            });
+            const writable = await handle.createWritable();
+            await writable.write(fileContent);
+            await writable.close();
+            setStatus('success');
+            setTimeout(() => setStatus('idle'), 3000);
+        } catch (err: any) {
+            if (err.name === 'AbortError') {
+                setStatus('cancelled');
+                setTimeout(() => setStatus('idle'), 3000);
+            } else {
+                console.error('Erro ao salvar arquivo:', err);
+                setErrorMessage(err.message || 'Ocorreu um erro desconhecido.');
+                setStatus('error');
+            }
+        }
+    };
+
+    const getStatusInfo = () => {
+        switch(status) {
+            case 'saving':
+                return <span className="text-sm text-blue-600 ml-3">Salvando...</span>;
+            case 'success':
+                return <span className="text-sm text-green-600 ml-3">Arquivo salvo com sucesso!</span>;
+            case 'error':
+                return <span className="text-sm text-red-600 ml-3">Erro: {errorMessage}</span>;
+            case 'cancelled':
+                 return <span className="text-sm text-yellow-600 ml-3">Operação cancelada.</span>;
+            default:
+                return null;
+        }
+    }
+
+    return (
+        <div className="flex items-center">
+            <button
+                onClick={handleSave}
+                disabled={status === 'saving'}
+                className="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded-md shadow-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-opacity-50 transition duration-150 ease-in-out disabled:bg-indigo-400 disabled:cursor-not-allowed"
+            >
+                {label}
+            </button>
+            {getStatusInfo()}
+        </div>
+    );
 };
 
 const GeneratedOutput: React.FC<GeneratedOutputProps> = ({ content, onBack }) => {
   return (
     <div className="bg-white p-8 shadow-lg rounded-lg border border-green-300 space-y-8">
       <div className="text-center">
-        <h2 className="text-2xl font-bold text-green-700">Ação Necessária: Atualize os Arquivos Manualmente</h2>
-        <p className="mt-2 text-gray-600">
-          Seu artigo foi processado. Agora, copie o conteúdo abaixo e cole nos arquivos correspondentes do seu projeto.
+        <h2 className="text-2xl font-bold text-green-700">Ação Necessária: Salve os Arquivos</h2>
+        <p className="mt-2 text-gray-600 max-w-2xl mx-auto">
+          Seu artigo foi processado. Use os botões abaixo para salvar os arquivos gerados diretamente no seu computador. Salve-os na pasta <strong>`public/artigos/`</strong> do seu projeto.
         </p>
       </div>
 
-      {/* JSON Output */}
-      <div className="space-y-2">
-        <h3 className="font-semibold text-gray-800">1. Atualize o arquivo de índice:</h3>
-        <p className="text-sm text-gray-500 font-mono bg-gray-100 p-2 rounded">public/artigos/index.json</p>
-        <div className="relative">
-          <textarea
-            readOnly
-            value={content.json}
-            rows={10}
-            className="w-full p-3 font-mono text-sm bg-gray-50 border border-gray-300 rounded-md"
-          />
-          <CopyButton textToCopy={content.json} />
-        </div>
+      {/* JSON Save */}
+      <div className="space-y-3 p-4 border rounded-lg">
+        <h3 className="font-semibold text-gray-800">1. Salve o arquivo de índice:</h3>
+        <p className="text-sm text-gray-500">Isso atualizará a lista de todos os artigos.</p>
+        <FileSaveButton
+            label="Salvar public/artigos/index.json"
+            fileName="index.json"
+            fileContent={content.json}
+            mimeType="application/json"
+            fileExtension="json"
+        />
       </div>
 
-      {/* Markdown Output or Deletion Instruction */}
+      {/* Markdown Save or Deletion Instruction */}
       {content.md && content.mdFilename && (
-         <div className="space-y-2">
-            <h3 className="font-semibold text-gray-800">2. Crie ou atualize o arquivo do artigo:</h3>
-            <p className="text-sm text-gray-500 font-mono bg-gray-100 p-2 rounded">{content.mdFilename}</p>
-            <div className="relative">
-            <textarea
-                readOnly
-                value={content.md}
-                rows={15}
-                className="w-full p-3 font-mono text-sm bg-gray-50 border border-gray-300 rounded-md"
+         <div className="space-y-3 p-4 border rounded-lg">
+            <h3 className="font-semibold text-gray-800">2. Salve o arquivo do artigo:</h3>
+            <p className="text-sm text-gray-500">Isso criará ou atualizará o arquivo de conteúdo do artigo.</p>
+             <FileSaveButton
+                label={`Salvar ${content.mdFilename.replace('public/artigos/', '')}`}
+                fileName={content.mdFilename.split('/').pop() || 'artigo.md'}
+                fileContent={content.md}
+                mimeType="text/markdown"
+                fileExtension="md"
             />
-            <CopyButton textToCopy={content.md} />
-            </div>
         </div>
       )}
       
       {content.instructions && (
-        <div className="space-y-2">
-            <h3 className="font-semibold text-red-700">2. Ação de Exclusão:</h3>
-            <div className="bg-red-50 border border-red-300 p-4 rounded-md text-red-800">
-                <p>{content.instructions}</p>
+        <div className="space-y-2 p-4 border border-red-200 bg-red-50 rounded-lg">
+            <h3 className="font-semibold text-red-700">2. Ação de Exclusão Manual:</h3>
+            <div className="text-red-800">
+                <p>O salvamento automático não pode excluir arquivos. Por favor, exclua o seguinte arquivo manualmente do seu projeto:</p>
+                <p className="font-mono bg-red-100 p-2 rounded mt-2 text-sm">{content.instructions.replace('Agora, exclua manualmente o arquivo: ', '')}</p>
             </div>
         </div>
       )}
 
       <div className="text-center pt-6 border-t">
+        <p className="text-sm text-gray-500 mb-4">Após salvar todos os arquivos necessários, você pode voltar para a lista.</p>
         <button
           onClick={onBack}
-          className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded-md"
+          className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded-md shadow-md"
         >
           Concluído, Voltar à Lista
         </button>
