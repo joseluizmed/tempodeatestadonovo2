@@ -19,6 +19,28 @@ const slugify = (text: string): string => {
     .replace(/--+/g, '-'); // Remove hífens duplicados
 };
 
+// Moved InputField outside of ArticleForm to prevent it from being redefined on every render,
+// which was causing the input to lose focus. It now receives its value and onChange handler via props.
+const InputField: React.FC<{
+  name: keyof ArticleDetails;
+  label: string;
+  value: string;
+  onChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
+}> = ({ name, label, value, onChange }) => (
+  <div>
+      <label htmlFor={name} className="block text-sm font-medium text-gray-700">{label}</label>
+      <input
+          type="text"
+          id={name}
+          name={name}
+          value={value}
+          onChange={onChange}
+          className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+          required
+      />
+  </div>
+);
+
 const ArticleForm: React.FC<ArticleFormProps> = ({ article, onSave, onCancel }) => {
   const [formData, setFormData] = useState<ArticleDetails>(article);
   const isNew = !article.slug;
@@ -44,26 +66,11 @@ const ArticleForm: React.FC<ArticleFormProps> = ({ article, onSave, onCancel }) 
     onSave(formData);
   };
   
-  const InputField: React.FC<{name: keyof ArticleDetails, label: string}> = ({ name, label }) => (
-    <div>
-        <label htmlFor={name} className="block text-sm font-medium text-gray-700">{label}</label>
-        <input
-            type="text"
-            id={name}
-            name={name}
-            value={formData[name] as string}
-            onChange={handleChange}
-            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-            required
-        />
-    </div>
-  );
-
   return (
     <form onSubmit={handleSubmit} className="bg-white p-8 shadow-lg rounded-lg border border-gray-200 space-y-6">
       <h2 className="text-2xl font-bold text-gray-800">{isNew ? 'Criar Novo Artigo' : `Editando: ${article.title}`}</h2>
       
-      <InputField name="title" label="Título do Artigo" />
+      <InputField name="title" label="Título do Artigo" value={formData.title} onChange={handleChange} />
       
       <div>
         <label htmlFor="slug" className="block text-sm font-medium text-gray-700">Slug (URL amigável)</label>
@@ -80,8 +87,8 @@ const ArticleForm: React.FC<ArticleFormProps> = ({ article, onSave, onCancel }) 
         <p className="mt-2 text-xs text-gray-500">O slug é gerado automaticamente a partir do título e não pode ser alterado após a criação.</p>
       </div>
 
-      <InputField name="author" label="Autor" />
-      <InputField name="image" label="URL da Imagem de Destaque" />
+      <InputField name="author" label="Autor" value={formData.author} onChange={handleChange} />
+      <InputField name="image" label="URL da Imagem de Destaque" value={formData.image} onChange={handleChange} />
 
       <div>
         <label htmlFor="summary" className="block text-sm font-medium text-gray-700">Resumo (Summary)</label>

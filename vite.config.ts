@@ -9,8 +9,8 @@ export default defineConfig({
   build: {
     rollupOptions: {
       input: {
-        main: resolve(__dirname, 'index.html'),
-        admin: resolve(__dirname, 'admin.html')
+        main: resolve('index.html'),
+        admin: resolve('admin.html')
       }
     }
   }
