@@ -1,16 +1,17 @@
 ---
-title: "Benefício por Incapacidade sem Perícia Médica?"
-publish_date: "2025-07-28T18:06:29.852Z"
+title: "🩺 Benefício por Incapacidade sem Perícia Médica?"
+publish_date: "2025-07-28T18:46:59.867Z"
 author: "Dr. José Luiz de Souza Neto"
 image: "https://images.unsplash.com/photo-1657727534671-f0c753f3a098?q=80&w=870&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-summary: "O AtestMed não representa um novo benefício, mas sim uma nova forma de análise, criada para proteger o trabalhador diante da incapacidade de comparecer presencialmente à perícia médica."
+summary: "A AtestMed não é uma solução perfeita, mas representa um importante avanço no caminho da desburocratização e da ampliação do acesso aos direitos previdenciários dos cidadãos brasileiros."
 ---
 
-**🩺 Benefício por Incapacidade sem Perícia Médica**
-
 >Tradicionalmente, a concessão de um benefício por incapacidade sempre exigiu uma avaliação presencial do segurado. Até pouco tempo atrás, um cidadão que solicitava esse tipo de benefício (como o Auxílio-Doença, por exemplo) precisava se deslocar até uma agência da Previdência Social e ser avaliado por um médico perito. Somente após essa avaliação presencial, o segurado tomava conhecimento do resultado e se teria ou não direito ao benefício.
+
 >Entretanto, graças aos avanços tecnológicos (como o uso da internet e das redes de alta velocidade para transmissão de dados), ao acesso mais generalizado a dispositivos móveis (como smartphones), e à incorporação de soluções inovadoras pelos serviços públicos, tornou-se possível, em alguns casos, receber benefícios a partir da **análise documental enviada pelo trabalhador**. Essa modalidade é conhecida como **AtestMed.**
+
 >O agendamento da perícia médica, de modo geral, permanece o mesmo. Porém, existe agora a possibilidade de que o pedido seja analisado **de forma remota ou presencial**, conforme decisão automatizada do sistema, que considera critérios como o tempo estimado de espera para uma perícia presencial. Em localidades onde os agendamentos presenciais são marcados para datas muito distantes, é possível proceder com essa análise alternativa — mais rápida, menos burocrática e que evita o deslocamento do trabalhador até a agência do INSS. Em muitos municípios do Brasil, a unidade mais próxima pode estar a centenas de quilômetros de distância.
+
 >Em resumo, o AtestMed **não representa um novo benefício**, mas sim uma **nova forma de análise**, criada para proteger o trabalhador diante da incapacidade de comparecer presencialmente à perícia médica.
 
 **📄 Documentação necessária para análise remota:**
