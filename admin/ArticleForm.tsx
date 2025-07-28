@@ -45,6 +45,13 @@ const ArticleForm: React.FC<ArticleFormProps> = ({ article, onSave, onCancel }) 
   const [formData, setFormData] = useState<ArticleDetails>(article);
   const isNew = !article.slug;
 
+  const [imageRepoUrl, setImageRepoUrl] = useState(() => localStorage.getItem('imageRepoUrl') || 'https://unsplash.com/s/photos/médico');
+  const [showRepoUrlInput, setShowRepoUrlInput] = useState(false);
+
+  useEffect(() => {
+    localStorage.setItem('imageRepoUrl', imageRepoUrl);
+  }, [imageRepoUrl]);
+
   useEffect(() => {
     setFormData(article);
   }, [article]);
@@ -64,6 +71,10 @@ const ArticleForm: React.FC<ArticleFormProps> = ({ article, onSave, onCancel }) 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     onSave(formData);
+  };
+
+  const handleImageRepoSearch = () => {
+    window.open(imageRepoUrl, '_blank', 'noopener,noreferrer');
   };
   
   return (
@@ -88,7 +99,50 @@ const ArticleForm: React.FC<ArticleFormProps> = ({ article, onSave, onCancel }) 
       </div>
 
       <InputField name="author" label="Autor" value={formData.author} onChange={handleChange} />
-      <InputField name="image" label="URL da Imagem de Destaque" value={formData.image} onChange={handleChange} />
+
+      <div>
+        <label htmlFor="image" className="block text-sm font-medium text-gray-700">URL da Imagem de Destaque</label>
+        <div className="mt-1 flex rounded-md shadow-sm">
+            <input
+                type="text"
+                id="image"
+                name="image"
+                value={formData.image}
+                onChange={handleChange}
+                className="block w-full px-3 py-2 border border-r-0 border-gray-300 rounded-l-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                required
+                placeholder="https://exemplo.com/imagem.jpg"
+            />
+            <button
+                type="button"
+                onClick={() => setShowRepoUrlInput(!showRepoUrlInput)}
+                className="inline-flex items-center px-3 border border-gray-300 bg-gray-50 text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                title="Configurar repositório de imagens"
+            >
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M11.49 3.17c-.38-1.56-2.6-1.56-2.98 0a1.532 1.532 0 01-2.286.948c-1.372-.836-2.942.734-2.106 2.106.54.886.061 2.042-.947 2.287-1.561.379-1.561 2.6 0 2.978a1.532 1.532 0 01.947 2.287c-.836 1.372.734 2.942 2.106 2.106a1.532 1.532 0 012.287.947c.379 1.561 2.6 1.561 2.978 0a1.532 1.532 0 012.287-.947c1.372.836 2.942-.734 2.106-2.106a1.532 1.532 0 01-.947-2.287c1.561-.379 1.561-2.6 0-2.978a1.532 1.532 0 01-.947-2.287c.836-1.372-.734-2.942-2.106-2.106a1.532 1.532 0 01-2.287-.947zM10 13a3 3 0 100-6 3 3 0 000 6z" clipRule="evenodd" /></svg>
+            </button>
+            <button
+                type="button"
+                onClick={handleImageRepoSearch}
+                className="relative inline-flex items-center space-x-2 px-4 py-2 border border-gray-300 text-sm font-medium rounded-r-md text-gray-700 bg-gray-50 hover:bg-gray-100 focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500"
+            >
+                Buscar Imagem
+            </button>
+        </div>
+        {showRepoUrlInput && (
+            <div className="mt-2 transition-all duration-300">
+                <label htmlFor="imageRepoUrl" className="block text-xs font-medium text-gray-600">URL do Repositório de Imagens (ex: Unsplash)</label>
+                <input
+                    type="text"
+                    id="imageRepoUrl"
+                    value={imageRepoUrl}
+                    onChange={(e) => setImageRepoUrl(e.target.value)}
+                    className="mt-1 block w-full px-2 py-1 text-xs border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                />
+                <p className="mt-1 text-xs text-gray-500">Esta URL será aberta em uma nova aba. O valor é salvo localmente no seu navegador.</p>
+            </div>
+        )}
+      </div>
 
       <div>
         <label htmlFor="summary" className="block text-sm font-medium text-gray-700">Resumo (Summary)</label>
@@ -115,6 +169,16 @@ const ArticleForm: React.FC<ArticleFormProps> = ({ article, onSave, onCancel }) 
             placeholder="Escreva o conteúdo do seu artigo aqui. Você pode usar a sintaxe Markdown."
             required
         />
+        <details className="mt-2 text-xs text-gray-500">
+            <summary className="cursor-pointer font-medium hover:text-gray-700">Ajuda com a formatação (Markdown)</summary>
+            <div className="mt-2 p-4 bg-gray-50 border rounded-md space-y-2 text-gray-600">
+                <p className="font-semibold text-gray-700">Sintaxe básica:</p>
+                <p><strong>Subtítulos:</strong> Use dois sinais de hash (<code>##</code>) para criar um subtítulo.</p>
+                <p><strong>Listas:</strong> Use um hífen (<code>-</code>) para criar listas com marcadores.</p>
+                <p><strong>Negrito:</strong> Envolva o texto com <strong>**dois asteriscos**</strong>.</p>
+                <p><strong>Citações:</strong> Use um sinal de maior (<code>&gt;</code>) no início da linha para criar um bloco de citação, útil para destacar informações importantes.</p>
+            </div>
+        </details>
       </div>
       
       <div className="flex justify-end gap-4">
