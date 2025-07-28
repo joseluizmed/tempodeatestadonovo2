@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { ArticleDetails } from '../types';
 
 interface ArticleFormProps {
@@ -48,6 +48,9 @@ const ArticleForm: React.FC<ArticleFormProps> = ({ article, onSave, onCancel }) 
   const [imageRepoUrl, setImageRepoUrl] = useState(() => localStorage.getItem('imageRepoUrl') || 'https://unsplash.com/s/photos/médico');
   const [showRepoUrlInput, setShowRepoUrlInput] = useState(false);
 
+  const bodyTextareaRef = useRef<HTMLTextAreaElement>(null);
+  const [selection, setSelection] = useState<{ start: number; end: number } | null>(null);
+
   useEffect(() => {
     localStorage.setItem('imageRepoUrl', imageRepoUrl);
   }, [imageRepoUrl]);
@@ -55,6 +58,16 @@ const ArticleForm: React.FC<ArticleFormProps> = ({ article, onSave, onCancel }) 
   useEffect(() => {
     setFormData(article);
   }, [article]);
+
+  useEffect(() => {
+    const textarea = bodyTextareaRef.current;
+    if (selection && textarea) {
+      textarea.focus();
+      textarea.setSelectionRange(selection.start, selection.end);
+      setSelection(null); // Reset after applying
+    }
+  }, [selection, formData.body]); // Also depends on formData.body to ensure it runs after the state is set
+
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -68,6 +81,69 @@ const ArticleForm: React.FC<ArticleFormProps> = ({ article, onSave, onCancel }) 
     });
   };
 
+  const applyMarkdownFormatting = (prefix: string, suffix: string, placeholder: string) => {
+    const textarea = bodyTextareaRef.current;
+    if (!textarea) return;
+
+    const start = textarea.selectionStart;
+    const end = textarea.selectionEnd;
+    const selectedText = textarea.value.substring(start, end);
+    
+    let newBody;
+    let newSelectionStart;
+    let newSelectionEnd;
+
+    if (selectedText) {
+        const newText = `${prefix}${selectedText}${suffix}`;
+        newBody = textarea.value.substring(0, start) + newText + textarea.value.substring(end);
+        newSelectionStart = start + newText.length;
+        newSelectionEnd = newSelectionStart;
+    } else {
+        const newText = `${prefix}${placeholder}${suffix}`;
+        newBody = textarea.value.substring(0, start) + newText + textarea.value.substring(end);
+        newSelectionStart = start + prefix.length;
+        newSelectionEnd = start + prefix.length + placeholder.length;
+    }
+
+    setFormData(prev => ({ ...prev, body: newBody }));
+    setSelection({ start: newSelectionStart, end: newSelectionEnd });
+  };
+
+  const handleAddList = () => {
+    const textarea = bodyTextareaRef.current;
+    if (!textarea) return;
+
+    const start = textarea.selectionStart;
+    const end = textarea.selectionEnd;
+    const selectedText = textarea.value.substring(start, end);
+
+    let newBody;
+    let finalCursorPos;
+
+    if (selectedText) {
+        const lines = selectedText.split('\n');
+        const listifiedText = lines.map(line => line.trim() === '' ? line : `- ${line}`).join('\n');
+        newBody = textarea.value.substring(0, start) + listifiedText + textarea.value.substring(end);
+        finalCursorPos = start + listifiedText.length;
+    } else {
+        const upToCursor = textarea.value.substring(0, start);
+        const isStartOfLine = start === 0 || upToCursor.endsWith('\n');
+        const textToInsert = isStartOfLine ? '- ' : '\n- ';
+        newBody = upToCursor + textToInsert + textarea.value.substring(end);
+        finalCursorPos = start + textToInsert.length;
+    }
+    
+    setFormData(prev => ({ ...prev, body: newBody }));
+    setSelection({ start: finalCursorPos, end: finalCursorPos });
+  };
+      
+  const handleAddLink = () => {
+    const url = prompt("Insira a URL para o link:", "https://");
+    if (url) {
+        applyMarkdownFormatting('[', `](${url})`, 'texto do link');
+    }
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     onSave(formData);
@@ -77,6 +153,17 @@ const ArticleForm: React.FC<ArticleFormProps> = ({ article, onSave, onCancel }) 
     window.open(imageRepoUrl, '_blank', 'noopener,noreferrer');
   };
   
+  const MarkdownToolbar = () => (
+    <div className="flex items-center flex-wrap gap-1 p-2 bg-gray-100 border border-b-0 border-gray-300 rounded-t-md">
+        <button type="button" onClick={() => applyMarkdownFormatting('**', '**', 'texto em negrito')} className="px-3 py-1 text-sm font-bold rounded hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-indigo-500" title="Negrito (Ctrl+B)">B</button>
+        <button type="button" onClick={() => applyMarkdownFormatting('*', '*', 'texto em itálico')} className="px-3 py-1 text-sm italic rounded hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-indigo-500" title="Itálico (Ctrl+I)">I</button>
+        <button type="button" onClick={() => applyMarkdownFormatting('## ', '', 'Subtítulo')} className="px-3 py-1 text-sm font-semibold rounded hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-indigo-500" title="Subtítulo">H2</button>
+        <button type="button" onClick={handleAddLink} className="px-3 py-1 text-sm text-blue-600 underline rounded hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-indigo-500" title="Link (Ctrl+K)">Link</button>
+        <button type="button" onClick={() => applyMarkdownFormatting('> ', '', 'Citação')} className="px-3 py-1 text-sm text-gray-500 rounded hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-indigo-500" title="Bloco de Citação">“ ”</button>
+        <button type="button" onClick={handleAddList} className="px-3 py-1 text-sm rounded hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-indigo-500" title="Lista com Marcadores">• Lista</button>
+    </div>
+  );
+
   return (
     <form onSubmit={handleSubmit} className="bg-white p-8 shadow-lg rounded-lg border border-gray-200 space-y-6">
       <h2 className="text-2xl font-bold text-gray-800">{isNew ? 'Criar Novo Artigo' : `Editando: ${article.title}`}</h2>
@@ -158,14 +245,16 @@ const ArticleForm: React.FC<ArticleFormProps> = ({ article, onSave, onCancel }) 
       </div>
 
       <div>
-        <label htmlFor="body" className="block text-sm font-medium text-gray-700">Corpo do Artigo (em Markdown)</label>
+        <label htmlFor="body" className="block text-sm font-medium text-gray-700 mb-1">Corpo do Artigo (em Markdown)</label>
+        <MarkdownToolbar />
         <textarea
             id="body"
+            ref={bodyTextareaRef}
             name="body"
             value={formData.body}
             onChange={handleChange}
             rows={15}
-            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm font-mono"
+            className="block w-full px-3 py-2 border border-gray-300 rounded-b-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm font-mono"
             placeholder="Escreva o conteúdo do seu artigo aqui. Você pode usar a sintaxe Markdown."
             required
         />
@@ -176,6 +265,7 @@ const ArticleForm: React.FC<ArticleFormProps> = ({ article, onSave, onCancel }) 
                 <p><strong>Subtítulos:</strong> Use dois sinais de hash (<code>##</code>) para criar um subtítulo.</p>
                 <p><strong>Listas:</strong> Use um hífen (<code>-</code>) para criar listas com marcadores.</p>
                 <p><strong>Negrito:</strong> Envolva o texto com <strong>**dois asteriscos**</strong>.</p>
+                 <p><strong>Itálico:</strong> Envolva o texto com <em>*um asterisco*</em>.</p>
                 <p><strong>Citações:</strong> Use um sinal de maior (<code>&gt;</code>) no início da linha para criar um bloco de citação, útil para destacar informações importantes.</p>
             </div>
         </details>
