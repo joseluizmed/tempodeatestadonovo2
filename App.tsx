@@ -2,7 +2,7 @@
 
 import React, { useState, useCallback, useEffect } from 'react';
 import { HashRouter, Routes, Route, Link } from 'react-router-dom';
-import { MedicalCertificate, AnalysisResults, CertificateStatus, DetailedTimelineSegment } from './types';
+import { MedicalCertificate, AnalysisResults, CertificateStatus, DetailedTimelineSegment, Article } from './types';
 import CertificateForm from './components/CertificateForm';
 import AnalysisDisplay from './components/AnalysisDisplay';
 import { AboutPage, PrivacyPolicyPage, ContactPage, INSSPage } from './components/StaticPages';
@@ -11,8 +11,26 @@ import InssGuideModal from './components/InssGuideModal';
 import InssActionCard from './components/InssActionCard';
 import ArticlesListPage from './components/ArticlesListPage';
 import ArticlePage from './components/ArticlePage';
+import CommunityOrAIAssistant from './components/CommunityOrAIAssistant';
 import { formatDate, addDays, differenceInDays } from './utils/dateUtils';
 import ScrollToTop from './components/ScrollToTop';
+
+// This component is copied from ArticlesListPage to be used on the new HomePage
+const ArticleCard: React.FC<{ article: Article }> = ({ article }) => (
+  <Link to={`/artigos/${article.slug}`} className="block group">
+    <div className="bg-white rounded-lg shadow-md hover:shadow-xl overflow-hidden transition-all duration-300 transform group-hover:-translate-y-1 h-full flex flex-col border border-gray-200">
+      <img className="w-full h-48 object-cover" src={article.image} alt={`Imagem de destaque para ${article.title}`} />
+      <div className="p-5 flex flex-col flex-grow">
+        <h2 className="text-xl font-bold text-blue-800 group-hover:text-blue-600 transition-colors duration-300">{article.title}</h2>
+        <p className="text-gray-600 mt-2 text-sm flex-grow">{article.summary}</p>
+        <p className="text-xs text-gray-500 mt-4">
+          <span>Por: {article.author}</span> | <span>{new Date(article.publish_date).toLocaleDateString('pt-BR', { day: '2-digit', month: 'long', year: 'numeric' })}</span>
+        </p>
+      </div>
+    </div>
+  </Link>
+);
+
 
 const App: React.FC = () => {
   const [rawCertificates, setRawCertificates] = useState<MedicalCertificate[]>([]);
@@ -271,16 +289,65 @@ const App: React.FC = () => {
   
   const certificateToEdit = editingCertificateId ? rawCertificates.find(c => c.id === editingCertificateId) : null;
 
+  const RecentArticles = () => {
+    const [articles, setArticles] = useState<Article[]>([]);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+      const fetchArticles = async () => {
+        try {
+          const response = await fetch('/artigos/index.json');
+          const data: Article[] = await response.json();
+          data.sort((a, b) => new Date(b.publish_date).getTime() - new Date(a.publish_date).getTime());
+          setArticles(data.slice(0, 4)); // Get latest 4 articles
+        } catch (error) {
+          console.error("Failed to fetch articles:", error);
+        } finally {
+          setLoading(false);
+        }
+      };
+      fetchArticles();
+    }, []);
+
+    if (loading) return <p className="text-center text-gray-500 py-10">Carregando artigos...</p>;
+    
+    return (
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            {articles.map(article => (
+                <ArticleCard key={article.slug} article={article} />
+            ))}
+        </div>
+    );
+  };
+
   const HomePage = () => (
     <>
-      <div className="bg-blue-600 text-white py-12 px-4 text-center shadow-inner">
-        <div className="container mx-auto">
-            <h1 className="text-4xl md:text-5xl font-bold">Tempo de Atestado</h1>
-            <p className="text-lg mt-2 opacity-90 max-w-3xl mx-auto">
-              Calcule períodos efetivamente cobertos a partir de atestados concedidos, identifique sobreposições e eventuais dias não cobertos entre os afastamentos.
-            </p>
+      <div className="bg-blue-600">
+        <div className="container mx-auto px-4 py-20 text-center text-white">
+          <h1 className="text-4xl md:text-5xl font-extrabold leading-tight">Descomplique o INSS e Entenda Seus Direitos</h1>
+          <p className="text-lg mt-4 opacity-90 max-w-3xl mx-auto">
+            Artigos, dicas e uma ferramenta gratuita para calcular seus prazos de afastamento.
+          </p>
+          <Link 
+            to="/calculadora-de-atestado" 
+            className="mt-8 inline-block bg-white text-blue-700 font-bold py-3 px-8 rounded-lg shadow-lg hover:bg-gray-200 transition duration-300 transform hover:scale-105"
+          >
+            Calcule seus atestados agora
+          </Link>
         </div>
       </div>
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <h2 className="text-3xl font-bold text-gray-800 mb-8 text-center">Artigos e Dúvidas Recentes</h2>
+        <RecentArticles />
+        <div className="pt-8 mt-12 border-t border-gray-200">
+          <CommunityOrAIAssistant />
+        </div>
+      </div>
+    </>
+  );
+
+  const CalculatorPage = () => (
+    <>
       <div className="container mx-auto px-2 sm:px-4 py-8">
         <h1 className="text-3xl md:text-4xl font-bold text-gray-800 mb-8 text-center">Calculadora de Tempo de Afastamento por Atestado Médico</h1>
         <div className="flex flex-col lg:flex-row gap-8">
@@ -345,11 +412,12 @@ const App: React.FC = () => {
   return (
     <HashRouter>
       <ScrollToTop />
-      <div className="flex flex-col min-h-screen bg-gray-100">
+      <div className="flex flex-col min-h-screen bg-gray-50">
         <Header />
         <main className="flex-grow">
           <Routes>
             <Route path="/" element={<HomePage />} />
+            <Route path="/calculadora-de-atestado" element={<CalculatorPage />} />
             <Route path="/sobre" element={<AboutPage />} />
             <Route path="/politica-de-privacidade" element={<PrivacyPolicyPage />} />
             <Route path="/contato" element={<ContactPage />} />
@@ -372,9 +440,11 @@ const App: React.FC = () => {
             <nav className="flex flex-wrap justify-center items-center gap-x-4 gap-y-2 text-sm">
               <Link to="/" className="px-3 py-1 hover:text-white hover:bg-gray-700 rounded-md transition-colors duration-150">Início</Link>
               <span className="text-gray-500 hidden md:inline">&middot;</span>
-              <Link to="/sobre" className="px-3 py-1 hover:text-white hover:bg-gray-700 rounded-md transition-colors duration-150">Sobre</Link>
+              <Link to="/calculadora-de-atestado" className="px-3 py-1 hover:text-white hover:bg-gray-700 rounded-md transition-colors duration-150">Calculadora de Atestado</Link>
               <span className="text-gray-500 hidden md:inline">&middot;</span>
               <Link to="/artigos" className="px-3 py-1 hover:text-white hover:bg-gray-700 rounded-md transition-colors duration-150">Perícia Médica [Dúvidas e Respostas]</Link>
+              <span className="text-gray-500 hidden md:inline">&middot;</span>
+              <Link to="/sobre" className="px-3 py-1 hover:text-white hover:bg-gray-700 rounded-md transition-colors duration-150">Sobre</Link>
               <span className="text-gray-500 hidden md:inline">&middot;</span>
               <Link to="/beneficio-inss" className="px-3 py-1 hover:text-white hover:bg-gray-700 rounded-md transition-colors duration-150">Benefício INSS</Link>
               <span className="text-gray-500 hidden md:inline">&middot;</span>

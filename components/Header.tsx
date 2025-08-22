@@ -1,4 +1,5 @@
 
+
 import React, { useState, useEffect } from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
 
@@ -8,10 +9,9 @@ const Header: React.FC = () => {
 
   const navLinks = [
     { name: 'Início', path: '/' },
+    { name: 'Dúvidas e Respostas', path: '/artigos' },
+    { name: 'Ferramenta de Cálculo', path: '/calculadora-de-atestado' },
     { name: 'Sobre', path: '/sobre' },
-    { name: 'Perícia Médica [Dúvidas e Respostas]', path: '/artigos' },
-    { name: 'Benefício INSS', path: '/beneficio-inss' },
-    { name: 'Política de Privacidade', path: '/politica-de-privacidade' },
     { name: 'Contato', path: '/contato' },
   ];
 
