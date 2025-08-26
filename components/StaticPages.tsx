@@ -17,7 +17,7 @@ const PageContainer: React.FC<{title: string; children: React.ReactNode}> = ({ t
 
 export const AboutPage: React.FC = () => {
   const [isHistoryExpanded, setIsHistoryExpanded] = useState(false);
-  const authorImageUrl = "https://images.unsplash.com/photo-1559839734-2b71ea197ec2?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D";
+  const authorImageUrl = "https://i.ibb.co/6nZt1W2/profile-photo.jpg";
 
   return (
     <PageContainer title="🩺 Atestado e Perícia Médica - O Autor">
