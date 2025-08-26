@@ -1,7 +1,10 @@
 
 
 
-import React, { useState } from 'react';
+
+
+
+import React, { useState, useRef, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 
 const PageContainer: React.FC<{title: string; children: React.ReactNode}> = ({ title, children }) => (
@@ -18,11 +21,99 @@ const PageContainer: React.FC<{title: string; children: React.ReactNode}> = ({ t
 
 export const AboutPage: React.FC = () => {
   const [isHistoryExpanded, setIsHistoryExpanded] = useState(false);
-  const authorImageUrl = "https://i.ibb.co/68q8w0d/profile-photo.jpg";
+  const defaultAuthorImageUrl = "https://i.ibb.co/sJJyFm8/Minha-Foto.jpg";
+  
+  const [authorImageUrl, setAuthorImageUrl] = useState(() => localStorage.getItem('authorImageUrl') || defaultAuthorImageUrl);
+  const [isEditingImage, setIsEditingImage] = useState(false);
+  const [newImageUrl, setNewImageUrl] = useState('');
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    localStorage.setItem('authorImageUrl', authorImageUrl);
+  }, [authorImageUrl]);
+
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file && file.type.startsWith('image/')) {
+        const reader = new FileReader();
+        reader.onloadend = () => {
+            setAuthorImageUrl(reader.result as string);
+            setIsEditingImage(false);
+        };
+        reader.readAsDataURL(file);
+    }
+  };
+
+  const handleUrlSave = (e: React.FormEvent) => {
+      e.preventDefault();
+      if (newImageUrl.startsWith('http://') || newImageUrl.startsWith('https://')) {
+          setAuthorImageUrl(newImageUrl);
+          setIsEditingImage(false);
+          setNewImageUrl('');
+      } else {
+          alert('Por favor, insira uma URL válida começando com http:// ou https://');
+      }
+  };
 
   return (
     <PageContainer title="🩺 Atestado e Perícia Médica - O Autor">
-      <img src={authorImageUrl} alt="Dr. José Luiz de Souza Neto" className="float-right ml-6 mb-4 w-40 sm:w-48 h-auto rounded-lg shadow-lg border" />
+      <div className="float-right ml-6 mb-4 w-40 sm:w-48">
+        <div className="relative group">
+            <img src={authorImageUrl} alt="Dr. José Luiz de Souza Neto" className="w-full h-auto rounded-lg shadow-lg border" />
+            <button 
+                onClick={() => {
+                    setIsEditingImage(!isEditingImage);
+                    setNewImageUrl(authorImageUrl.startsWith('data:') ? '' : authorImageUrl);
+                }}
+                className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-50 flex items-center justify-center rounded-lg transition-all duration-300 text-white opacity-0 group-hover:opacity-100"
+                aria-label="Alterar foto"
+            >
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.5L15.232 5.232z" />
+                </svg>
+                <span className="ml-2 font-semibold">Alterar</span>
+            </button>
+            <input 
+                type="file" 
+                ref={fileInputRef}
+                onChange={handleFileChange}
+                className="hidden"
+                accept="image/png, image/jpeg, image/gif, image/webp"
+                id="author-photo-upload"
+            />
+        </div>
+
+        {isEditingImage && (
+            <div className="mt-2 p-3 bg-gray-100 rounded-lg border shadow-inner transition-all duration-300 animate-fade-in">
+                <p className="text-xs text-gray-600 mb-2 font-semibold">Atualizar foto:</p>
+                <form onSubmit={handleUrlSave} className="space-y-2">
+                    <input 
+                        type="text"
+                        value={newImageUrl}
+                        onChange={(e) => setNewImageUrl(e.target.value)}
+                        placeholder="Cole a URL da imagem aqui"
+                        className="w-full px-2 py-1 text-xs border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-1 focus:ring-blue-500"
+                    />
+                    <button type="submit" className="w-full text-center text-xs font-semibold bg-blue-500 hover:bg-blue-600 text-white py-1 px-2 rounded-md shadow-sm transition-colors">
+                        Salvar URL
+                    </button>
+                </form>
+                <div className="text-center my-1 text-xs text-gray-400">ou</div>
+                <label 
+                    htmlFor="author-photo-upload" 
+                    className="block w-full text-center text-xs font-semibold bg-gray-500 hover:bg-gray-600 text-white py-1 px-2 rounded-md shadow-sm cursor-pointer transition-colors"
+                >
+                    Carregar do Dispositivo
+                </label>
+                <button
+                    onClick={() => setIsEditingImage(false)}
+                    className="w-full text-center text-xs text-gray-500 hover:text-gray-800 mt-2"
+                >
+                    Cancelar
+                </button>
+            </div>
+        )}
+      </div>
       <p>Olá, seja muito bem-vindo(a) ao meu site, Atestado e Perícia Médica! Eu sou Dr. José Luiz (CRM/RN 4271), médico cirurgião com uma jornada dedicada à Cirurgia Geral, Videolaparoscopia, Perícia Médica Previdenciária e ao ensino na Universidade Federal do Rio Grande do Norte (UFRN). Tenho Mestrado em Ensino na Saúde e Pós-graduação em Perícia Médica. Atuo como Perito Médico Federal no Instituto Nacional do Seguro Social (INSS).</p>
       <p>Ao longo de mais de duas décadas de experiência, especialmente como Perito Previdenciário no INSS, percebi que muitos trabalhadores enfrentam dificuldades para entender seus direitos e deveres em relação a atestados médicos. Essa observação me motivou a criar uma solução prática e acessível: o site Atestado e Perícia Médica, onde você pode aumentar seu conhecimento no assunto, seja para concursos, para problemas enfrentados por você, por um familiar ou amigo. Aqui você terá um ambiente seguro e confiável para tirar dúvidas comigo ou com a assistente de IA que criei "A Perícia", também será possível discutir com outras pessoas assuntos relacionados.</p>
       <p>Minha experiência em perícia médica e a paixão por desenvolver tecnologias aplicadas à educação e saúde se uniram na criação deste site. Meu objetivo é simples: oferecer informação clara e direta para que você possa entender seus direitos, evitar interpretações errôneas e ter acesso facilitado ao que lhe é devido.</p>
@@ -79,6 +170,13 @@ export const AboutPage: React.FC = () => {
           </div>
         )}
       </div>
+      <style>{`
+        @keyframes fade-in {
+          from { opacity: 0; transform: translateY(-10px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fade-in { animation: fade-in 0.3s ease-out forwards; }
+      `}</style>
     </PageContainer>
   );
 };
