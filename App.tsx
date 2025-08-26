@@ -325,11 +325,11 @@ const App: React.FC = () => {
       <div className="relative bg-gray-800 text-white overflow-hidden">
         <div className="absolute inset-0">
           <img 
-              src="https://i.imgur.com/g8o2m7v.jpg" 
-              alt="Collage of diverse professionals" 
-              className="w-full h-full object-cover opacity-20"
+              src="https://i.imgur.com/A1244Ot.png" 
+              alt="Collage de diversos profissionais" 
+              className="w-full h-full object-cover"
           />
-          <div className="absolute inset-0 bg-blue-900 mix-blend-multiply" aria-hidden="true"></div>
+          <div className="absolute inset-0 bg-black/60" aria-hidden="true"></div>
         </div>
         <div className="relative container mx-auto px-4 py-20 text-center">
           <h1 className="text-4xl md:text-5xl font-extrabold leading-tight">Descomplique o INSS e Entenda Seus Direitos</h1>
