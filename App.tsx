@@ -11,6 +11,7 @@ import InssGuideModal from './components/InssGuideModal';
 import InssActionCard from './components/InssActionCard';
 import ArticlesListPage from './components/ArticlesListPage';
 import ArticlePage from './components/ArticlePage';
+import CommunityOrAIAssistant from './components/CommunityOrAIAssistant';
 import { formatDate, addDays, differenceInDays } from './utils/dateUtils';
 import ScrollToTop from './components/ScrollToTop';
 
@@ -326,7 +327,7 @@ const App: React.FC = () => {
           <img 
               src="https://i.imgur.com/g8o2m7v.jpg" 
               alt="Collage of diverse professionals" 
-              className="w-full h-full object-cover opacity-20 filter grayscale"
+              className="w-full h-full object-cover opacity-20"
           />
           <div className="absolute inset-0 bg-blue-900 mix-blend-multiply" aria-hidden="true"></div>
         </div>
@@ -439,7 +440,7 @@ const App: React.FC = () => {
         <footer className="bg-gray-800 text-gray-300 text-center py-8">
           <div className="container mx-auto px-4">
             <p className="mb-4 text-sm">
-              © 2025 Tempo de Atestado | Desenvolvido por Dr. José Luiz de Souza Neto (CRM/RN 4271) – Todos os direitos reservados. Versão 5.5
+              © 2025 Site Atestado e Perícia Médica | Desenvolvido por Dr. José Luiz de Souza Neto (CRM/RN 4271) – Todos os direitos reservados. Versão 6.0
             </p>
             <nav className="flex flex-wrap justify-center items-center gap-x-4 gap-y-2 text-sm">
               <Link to="/" className="px-3 py-1 hover:text-white hover:bg-gray-700 rounded-md transition-colors duration-150">Início</Link>

@@ -1,7 +1,18 @@
-
-
 import React, { useState, useEffect } from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
+
+const Logo = () => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    viewBox="0 0 24 24"
+    fill="currentColor"
+    className="w-8 h-8 mr-2 text-white"
+    aria-hidden="true"
+  >
+    <path d="M18 2H6c-1.11 0-2 .9-2 2v16c0 1.1.89 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zM9 4h2v5l-1-.75L9 9V4zm9 16H6V4h1v9l3-2.25L13 13V4h5v16z" />
+  </svg>
+);
+
 
 const Header: React.FC = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -32,7 +43,7 @@ const Header: React.FC = () => {
         <div className="flex items-center justify-between h-16">
           <div className="flex-shrink-0">
             <NavLink to="/" className="text-white text-xl font-bold hover:text-blue-200 flex items-center">
-              <span className="text-2xl mr-2">🩺</span>
+              <Logo />
               Atestado e Perícia Médica
             </NavLink>
           </div>
