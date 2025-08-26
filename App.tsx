@@ -1,5 +1,6 @@
 
 
+
 import React, { useState, useCallback, useEffect } from 'react';
 import { HashRouter, Routes, Route, Link } from 'react-router-dom';
 import { MedicalCertificate, AnalysisResults, CertificateStatus, DetailedTimelineSegment, Article } from './types';
@@ -11,7 +12,6 @@ import InssGuideModal from './components/InssGuideModal';
 import InssActionCard from './components/InssActionCard';
 import ArticlesListPage from './components/ArticlesListPage';
 import ArticlePage from './components/ArticlePage';
-import CommunityOrAIAssistant from './components/CommunityOrAIAssistant';
 import { formatDate, addDays, differenceInDays } from './utils/dateUtils';
 import ScrollToTop from './components/ScrollToTop';
 
