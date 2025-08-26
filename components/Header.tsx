@@ -1,5 +1,6 @@
 
 
+
 import React, { useState, useEffect } from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
 
@@ -9,9 +10,11 @@ const Header: React.FC = () => {
 
   const navLinks = [
     { name: 'Início', path: '/' },
-    { name: 'Dúvidas e Respostas', path: '/artigos' },
-    { name: 'Ferramenta de Cálculo', path: '/calculadora-de-atestado' },
     { name: 'Sobre', path: '/sobre' },
+    { name: 'Calculadora de Atestado', path: '/calculadora-de-atestado' },
+    { name: 'Perícia Médica [Dúvidas e Respostas]', path: '/artigos' },
+    { name: 'Benefícios do INSS', path: '/beneficio-inss' },
+    { name: 'Política de Privacidade', path: '/politica-de-privacidade' },
     { name: 'Contato', path: '/contato' },
   ];
 
@@ -29,8 +32,9 @@ const Header: React.FC = () => {
       <nav className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           <div className="flex-shrink-0">
-            <NavLink to="/" className="text-white text-xl font-bold hover:text-blue-200">
-              Tempo de Atestado
+            <NavLink to="/" className="text-white text-xl font-bold hover:text-blue-200 flex items-center">
+              <span className="text-2xl mr-2">🩺</span>
+              Atestado e Perícia Médica
             </NavLink>
           </div>
           

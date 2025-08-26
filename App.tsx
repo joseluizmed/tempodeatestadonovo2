@@ -322,8 +322,16 @@ const App: React.FC = () => {
 
   const HomePage = () => (
     <>
-      <div className="bg-blue-600">
-        <div className="container mx-auto px-4 py-20 text-center text-white">
+      <div className="relative bg-gray-800 text-white overflow-hidden">
+        <div className="absolute inset-0">
+          <img 
+              src="https://i.imgur.com/g8o2m7v.jpg" 
+              alt="Collage of diverse professionals" 
+              className="w-full h-full object-cover opacity-20 filter grayscale"
+          />
+          <div className="absolute inset-0 bg-blue-900 mix-blend-multiply" aria-hidden="true"></div>
+        </div>
+        <div className="relative container mx-auto px-4 py-20 text-center">
           <h1 className="text-4xl md:text-5xl font-extrabold leading-tight">Descomplique o INSS e Entenda Seus Direitos</h1>
           <p className="text-lg mt-4 opacity-90 max-w-3xl mx-auto">
             Artigos, dicas e uma ferramenta gratuita para calcular seus prazos de afastamento.
@@ -337,11 +345,8 @@ const App: React.FC = () => {
         </div>
       </div>
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <h2 className="text-3xl font-bold text-gray-800 mb-8 text-center">Artigos e Dúvidas Recentes</h2>
+        <h2 className="text-3xl font-bold text-gray-800 mb-8 text-center">Artigos sobre Perícia Médica e Benefícios</h2>
         <RecentArticles />
-        <div className="pt-8 mt-12 border-t border-gray-200">
-          <CommunityOrAIAssistant />
-        </div>
       </div>
     </>
   );
@@ -440,13 +445,13 @@ const App: React.FC = () => {
             <nav className="flex flex-wrap justify-center items-center gap-x-4 gap-y-2 text-sm">
               <Link to="/" className="px-3 py-1 hover:text-white hover:bg-gray-700 rounded-md transition-colors duration-150">Início</Link>
               <span className="text-gray-500 hidden md:inline">&middot;</span>
+              <Link to="/sobre" className="px-3 py-1 hover:text-white hover:bg-gray-700 rounded-md transition-colors duration-150">Sobre</Link>
+              <span className="text-gray-500 hidden md:inline">&middot;</span>
               <Link to="/calculadora-de-atestado" className="px-3 py-1 hover:text-white hover:bg-gray-700 rounded-md transition-colors duration-150">Calculadora de Atestado</Link>
               <span className="text-gray-500 hidden md:inline">&middot;</span>
               <Link to="/artigos" className="px-3 py-1 hover:text-white hover:bg-gray-700 rounded-md transition-colors duration-150">Perícia Médica [Dúvidas e Respostas]</Link>
               <span className="text-gray-500 hidden md:inline">&middot;</span>
-              <Link to="/sobre" className="px-3 py-1 hover:text-white hover:bg-gray-700 rounded-md transition-colors duration-150">Sobre</Link>
-              <span className="text-gray-500 hidden md:inline">&middot;</span>
-              <Link to="/beneficio-inss" className="px-3 py-1 hover:text-white hover:bg-gray-700 rounded-md transition-colors duration-150">Benefício INSS</Link>
+              <Link to="/beneficio-inss" className="px-3 py-1 hover:text-white hover:bg-gray-700 rounded-md transition-colors duration-150">Benefícios do INSS</Link>
               <span className="text-gray-500 hidden md:inline">&middot;</span>
               <Link to="/politica-de-privacidade" className="px-3 py-1 hover:text-white hover:bg-gray-700 rounded-md transition-colors duration-150 text-center">Política de Privacidade</Link>
               <span className="text-gray-500 hidden md:inline">&middot;</span>
