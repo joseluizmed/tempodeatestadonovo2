@@ -1,5 +1,6 @@
 
 
+
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 
@@ -17,7 +18,7 @@ const PageContainer: React.FC<{title: string; children: React.ReactNode}> = ({ t
 
 export const AboutPage: React.FC = () => {
   const [isHistoryExpanded, setIsHistoryExpanded] = useState(false);
-  const authorImageUrl = "https://i.postimg.cc/SNbV3YmY/profile-photo.jpg";
+  const authorImageUrl = "https://i.ibb.co/68q8w0d/profile-photo.jpg";
 
   return (
     <PageContainer title="🩺 Atestado e Perícia Médica - O Autor">

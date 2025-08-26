@@ -1,7 +1,3 @@
-
-
-
-
 import React, { useState, useCallback, useEffect } from 'react';
 import { HashRouter, Routes, Route, Link } from 'react-router-dom';
 import { MedicalCertificate, AnalysisResults, CertificateStatus, DetailedTimelineSegment, Article } from './types';
@@ -326,8 +322,8 @@ const App: React.FC = () => {
       <div className="relative bg-gray-800 text-white overflow-hidden">
         <div className="absolute inset-0">
           <img 
-              src="https://images.unsplash.com/photo-1556761175-5973dc0f32e7?q=80&w=2232&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" 
-              alt="Collage de diversos profissionais" 
+              src="https://images.unsplash.com/photo-1600880292203-943068b2591a?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" 
+              alt="Aperto de mãos simbolizando acordo e confiança" 
               className="w-full h-full object-cover"
           />
           <div className="absolute inset-0 bg-blue-800/70" aria-hidden="true"></div>
@@ -345,8 +341,76 @@ const App: React.FC = () => {
           </Link>
         </div>
       </div>
+
+      <div className="bg-gray-50 py-16">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="text-center mb-12">
+                <h2 className="text-3xl font-bold text-gray-800">Seja Bem-Vindo(a)!</h2>
+                <p className="mt-4 text-lg text-gray-600 max-w-3xl mx-auto">Explore nossas ferramentas e seções para encontrar as informações que você precisa sobre atestados, perícia médica e seus direitos no INSS.</p>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                {/* Card 1: Calculadora */}
+                <div className="bg-white p-6 rounded-lg shadow-lg border border-gray-200 text-center flex flex-col hover:shadow-xl transition-shadow duration-300">
+                    <div className="text-blue-600 mb-4">
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-12 w-12 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+                        </svg>
+                    </div>
+                    <h3 className="text-xl font-semibold text-gray-800 mb-2">Calculadora de Atestado</h3>
+                    <p className="text-gray-600 flex-grow">Calcule períodos, identifique sobreposições e dias não cobertos entre seus atestados.</p>
+                    <Link to="/calculadora-de-atestado" className="mt-6 inline-block bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-md shadow-md transition duration-150 transform hover:scale-105">
+                        Acessar Calculadora
+                    </Link>
+                </div>
+
+                {/* Card 2: Dúvidas */}
+                <div className="bg-white p-6 rounded-lg shadow-lg border border-gray-200 text-center flex flex-col hover:shadow-xl transition-shadow duration-300">
+                    <div className="text-blue-600 mb-4">
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-12 w-12 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                    </div>
+                    <h3 className="text-xl font-semibold text-gray-800 mb-2">Dúvidas sobre Perícia</h3>
+                    <p className="text-gray-600 flex-grow">Artigos, guias e um fórum para tirar suas dúvidas sobre a perícia médica e seus direitos.</p>
+                    <Link to="/artigos" className="mt-6 inline-block bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-md shadow-md transition duration-150 transform hover:scale-105">
+                        Ver Artigos
+                    </Link>
+                </div>
+
+                {/* Card 3: Benefícios */}
+                <div className="bg-white p-6 rounded-lg shadow-lg border border-gray-200 text-center flex flex-col hover:shadow-xl transition-shadow duration-300">
+                    <div className="text-blue-600 mb-4">
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-12 w-12 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                        </svg>
+                    </div>
+                    <h3 className="text-xl font-semibold text-gray-800 mb-2">Benefícios do INSS</h3>
+                    <p className="text-gray-600 flex-grow">Entenda sobre o Benefício por Incapacidade Temporária e como agendar sua perícia.</p>
+                    <Link to="/beneficio-inss" className="mt-6 inline-block bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-md shadow-md transition duration-150 transform hover:scale-105">
+                        Saiba Mais
+                    </Link>
+                </div>
+
+                {/* Card 4: Sobre */}
+                <div className="bg-white p-6 rounded-lg shadow-lg border border-gray-200 text-center flex flex-col hover:shadow-xl transition-shadow duration-300">
+                    <div className="text-blue-600 mb-4">
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-12 w-12 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M5.121 17.804A13.937 13.937 0 0112 16c2.5 0 4.847.655 6.879 1.804M15 10a3 3 0 11-6 0 3 3 0 016 0zm6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                    </div>
+                    <h3 className="text-xl font-semibold text-gray-800 mb-2">Sobre o Autor</h3>
+                    <p className="text-gray-600 flex-grow">Conheça a motivação e a experiência do Dr. José Luiz na criação deste projeto.</p>
+                    <Link to="/sobre" className="mt-6 inline-block bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-md shadow-md transition duration-150 transform hover:scale-105">
+                        Conhecer
+                    </Link>
+                </div>
+            </div>
+        </div>
+      </div>
+
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <h2 className="text-3xl font-bold text-gray-800 mb-8 text-center">Artigos sobre Perícia Médica e Benefícios</h2>
+        <h2 className="text-3xl font-bold text-gray-800 mb-8 text-center">Artigos Recentes sobre Perícia Médica e Benefícios</h2>
         <RecentArticles />
       </div>
     </>
