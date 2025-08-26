@@ -11,7 +11,6 @@ import InssGuideModal from './components/InssGuideModal';
 import InssActionCard from './components/InssActionCard';
 import ArticlesListPage from './components/ArticlesListPage';
 import ArticlePage from './components/ArticlePage';
-import CommunityOrAIAssistant from './components/CommunityOrAIAssistant';
 import { formatDate, addDays, differenceInDays } from './utils/dateUtils';
 import ScrollToTop from './components/ScrollToTop';
 

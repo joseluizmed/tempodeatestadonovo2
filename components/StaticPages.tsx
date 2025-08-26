@@ -1,7 +1,5 @@
 
 
-
-
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 
@@ -139,14 +137,14 @@ export const PrivacyPolicyPage: React.FC = () => {
 
 export const ContactPage: React.FC = () => {
   useEffect(() => {
-    window.location.href = "mailto:joseluizmed@gmail.com?subject=Sugestão para o site Atestado e Perícia Médica";
+    window.location.href = "mailto:joseluizmed@gmail.com?subject=Sugestão para o aplicativo site Atestado e Perícia Médica";
   }, []);
 
   return (
     <PageContainer title="Contato">
-      <p>Você está sendo redirecionado para o seu cliente de e-mail para enviar uma mensagem para <strong>joseluizmed@gmail.com</strong> com o assunto "Sugestão para o site Atestado e Perícia Médica".</p>
+      <p>Você está sendo redirecionado para o seu cliente de e-mail para enviar uma mensagem para <strong>joseluizmed@gmail.com</strong> com o assunto "Sugestão para o aplicativo site Atestado e Perícia Médica".</p>
       <p className="mt-4">Se o redirecionamento não funcionar, por favor, copie o endereço de e-mail e envie sua mensagem manualmente.</p>
-      <p className="mt-4"><a href="mailto:joseluizmed@gmail.com?subject=Sugestão para o site Atestado e Perícia Médica" className="text-blue-600 hover:underline">Clique aqui se não for redirecionado.</a></p>
+      <p className="mt-4"><a href="mailto:joseluizmed@gmail.com?subject=Sugestão para o aplicativo site Atestado e Perícia Médica" className="text-blue-600 hover:underline">Clique aqui se não for redirecionado.</a></p>
     </PageContainer>
   );
 };
