@@ -322,8 +322,8 @@ const App: React.FC = () => {
       <div className="relative bg-gray-800 text-white overflow-hidden">
         <div className="absolute inset-0">
           <img 
-              src="https://images.unsplash.com/photo-1542838132-92c53300491e?q=80&w=2070&auto=format&fit=crop" 
-              alt="Médico com um estetoscópio, representando cuidado e profissionalismo na área da saúde" 
+              src="https://images.unsplash.com/photo-1521791136064-7986c2920216?q=80&w=1169&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" 
+              alt="Aperto de mãos simbolizando acordo e confiança" 
               className="w-full h-full object-cover"
           />
           <div className="absolute inset-0 bg-blue-800/70" aria-hidden="true"></div>
