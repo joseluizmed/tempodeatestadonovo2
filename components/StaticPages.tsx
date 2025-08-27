@@ -180,5 +180,22 @@ export const INSSPage: React.FC<{ onOpenGuide: () => void }> = ({ onOpenGuide })
         Ver Guia de Agendamento
       </button>
     </div>
+
+    <h2 className="text-2xl font-semibold text-gray-800 mt-8 mb-3">📱 Acesse pelo Celular</h2>
+    <p>Para facilitar o acesso aos serviços, você também pode baixar o aplicativo oficial Meu INSS no seu smartphone. Com ele, você pode agendar perícias, consultar extratos e muito mais, de forma rápida e segura.</p>
+    <div className="mt-4 flex flex-col sm:flex-row gap-4">
+        <a href="https://play.google.com/store/apps/details?id=br.gov.dataprev.meuinss" target="_blank" rel="noopener noreferrer" className="inline-flex items-center justify-center px-5 py-3 border border-transparent text-base font-medium rounded-md text-white bg-gray-800 hover:bg-gray-900 transition-transform transform hover:scale-105">
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+            </svg>
+            <span>Disponível no Google Play</span>
+        </a>
+        <a href="https://apps.apple.com/br/app/meu-inss-central-de-servi%C3%A7os/id1243048358" target="_blank" rel="noopener noreferrer" className="inline-flex items-center justify-center px-5 py-3 border border-transparent text-base font-medium rounded-md text-white bg-gray-800 hover:bg-gray-900 transition-transform transform hover:scale-105">
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+            </svg>
+            <span>Baixar na App Store</span>
+        </a>
+    </div>
   </PageContainer>
 );
