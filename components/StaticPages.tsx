@@ -1,6 +1,3 @@
-
-
-
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 
@@ -18,11 +15,13 @@ const PageContainer: React.FC<{title: string; children: React.ReactNode}> = ({ t
 
 export const AboutPage: React.FC = () => {
   const [isHistoryExpanded, setIsHistoryExpanded] = useState(false);
-  const authorImageUrl = "https://i.ibb.co/68q8w0d/profile-photo.jpg";
+  const authorImageUrl = "https://i.ibb.co/sJJyFm8q/Minha-Foto.jpg";
 
   return (
     <PageContainer title="🩺 Atestado e Perícia Médica - O Autor">
-      <img src={authorImageUrl} alt="Dr. José Luiz de Souza Neto" className="float-right ml-6 mb-4 w-40 sm:w-48 h-auto rounded-lg shadow-lg border" />
+      <div className="float-right ml-6 mb-4 w-40 sm:w-48">
+        <img src={authorImageUrl} alt="Dr. José Luiz de Souza Neto" className="w-full h-auto rounded-lg shadow-lg border" />
+      </div>
       <p>Olá, seja muito bem-vindo(a) ao meu site, Atestado e Perícia Médica! Eu sou Dr. José Luiz (CRM/RN 4271), médico cirurgião com uma jornada dedicada à Cirurgia Geral, Videolaparoscopia, Perícia Médica Previdenciária e ao ensino na Universidade Federal do Rio Grande do Norte (UFRN). Tenho Mestrado em Ensino na Saúde e Pós-graduação em Perícia Médica. Atuo como Perito Médico Federal no Instituto Nacional do Seguro Social (INSS).</p>
       <p>Ao longo de mais de duas décadas de experiência, especialmente como Perito Previdenciário no INSS, percebi que muitos trabalhadores enfrentam dificuldades para entender seus direitos e deveres em relação a atestados médicos. Essa observação me motivou a criar uma solução prática e acessível: o site Atestado e Perícia Médica, onde você pode aumentar seu conhecimento no assunto, seja para concursos, para problemas enfrentados por você, por um familiar ou amigo. Aqui você terá um ambiente seguro e confiável para tirar dúvidas comigo ou com a assistente de IA que criei "A Perícia", também será possível discutir com outras pessoas assuntos relacionados.</p>
       <p>Minha experiência em perícia médica e a paixão por desenvolver tecnologias aplicadas à educação e saúde se uniram na criação deste site. Meu objetivo é simples: oferecer informação clara e direta para que você possa entender seus direitos, evitar interpretações errôneas e ter acesso facilitado ao que lhe é devido.</p>
@@ -142,49 +141,61 @@ export const ContactPage: React.FC = () => {
 
       <div className="mt-8 p-4 rounded-lg bg-yellow-50 border-l-4 border-yellow-400 text-yellow-800">
         <h3 className="font-bold">Sem cliente de e-mail configurado?</h3>
-        <p className="text-sm mt-1">Se o botão "Abrir no seu aplicativo de e-mail" não funcionar, seu dispositivo pode não ter um programa de e-mail padrão. Nesse caso, use o botão "Copiar E-mail" e cole o endereço no seu serviço de e-mail preferido (Gmail, Outlook, etc.).</p>
+        <p className="text-sm mt-1">Se o botão "Abrir no seu aplicativo de e-mail" não funcionar, seu dispositivo pode não ter um programa de e-mail padrão. Nesse caso, use o botão "Copiar E-mail" e cole o endereço no seu webmail (Gmail, Outlook, etc.).</p>
       </div>
     </PageContainer>
   );
 };
 
+export const INSSPage: React.FC<{ onOpenGuide: () => void }> = ({ onOpenGuide }) => (
+  <PageContainer title="📄 Benefício por Incapacidade Temporária (Antigo Auxílio-Doença)">
+    <p>O Benefício por Incapacidade Temporária, conhecido anteriormente como Auxílio-Doença, é um direito do trabalhador segurado pelo INSS que se encontra temporariamente incapacitado para suas atividades laborais por motivo de doença ou acidente.</p>
+    
+    <h2 className="text-2xl font-semibold text-gray-800 mt-6 mb-3">✅ Quem tem direito?</h2>
+    <p>Para ter direito ao benefício, o trabalhador precisa cumprir alguns requisitos essenciais:</p>
+    <ul className="list-disc list-inside space-y-2 mt-2">
+      <li><strong>Afastamento superior a 15 dias:</strong> A incapacidade para o trabalho deve ser superior a 15 dias consecutivos. Para empregados de carteira assinada, os primeiros 15 dias são pagos pela empresa, e o INSS é responsável a partir do 16º dia.</li>
+      <li><strong>Qualidade de segurado:</strong> É preciso estar contribuindo para o INSS ou estar no "período de graça" (tempo que mantém a qualidade de segurado mesmo sem contribuir).</li>
+      <li><strong>Carência:</strong> Geralmente, é necessário ter contribuído por no mínimo 12 meses antes do início da incapacidade. Essa carência é dispensada em casos de acidente de qualquer natureza (incluindo o de trabalho) ou de doenças graves especificadas em lei.</li>
+    </ul>
 
-export const INSSPage: React.FC<{onOpenGuide: () => void}> = ({ onOpenGuide }) => (
-    <PageContainer title="📄 Benefício por Incapacidade Temporária (Auxílio-Doença)">
-        <p>O Benefício por Incapacidade Temporária é devido ao segurado do INSS que fica incapacitado para o seu trabalho ou atividade habitual por mais de 15 dias consecutivos. A avaliação é feita pela Perícia Médica Federal.</p>
-        
-        <h2 className="text-2xl font-semibold text-gray-800 mt-6 mb-3">🗓️ Prazo para Requerimento</h2>
-        <p>Para empregados com carteira assinada, o requerimento deve ser feito <strong>após o 15º dia de afastamento</strong>. O prazo para agendar a perícia é de <strong>30 dias a partir da data de início da incapacidade</strong>. Se o pedido for feito dentro desse prazo, o pagamento do benefício será retroativo ao 16º dia de afastamento. Se for feito após, o pagamento iniciará na data do requerimento.</p>
+    <h2 className="text-2xl font-semibold text-gray-800 mt-6 mb-3">📋 Documentos Essenciais para a Perícia</h2>
+    <p>A preparação correta da documentação é fundamental para o sucesso do seu pedido. No dia da perícia, leve os seguintes documentos originais:</p>
+    <ul className="list-disc list-inside space-y-2 mt-2">
+      <li>Documento de identificação oficial com foto (RG, CNH).</li>
+      <li>CPF.</li>
+      <li>Carteira de Trabalho e Previdência Social (CTPS), carnês de contribuição ou outros documentos que comprovem o pagamento ao INSS.</li>
+      <li><strong>Documentação Médica:</strong> Atestados, laudos, relatórios e exames recentes que comprovem a sua condição de saúde e a incapacidade para o trabalho. O atestado deve ser legível, conter o CID (Classificação Internacional de Doenças), data, assinatura e carimbo do médico.</li>
+      <li>Comunicação de Acidente de Trabalho (CAT), se o afastamento for decorrente de um acidente de trabalho.</li>
+      <li>Declaração carimbada e assinada do empregador, informando a data do último dia trabalhado (para segurados empregados).</li>
+    </ul>
 
-        <h2 className="text-2xl font-semibold text-gray-800 mt-6 mb-3">📋 Documentos Essenciais para a Perícia</h2>
-        <ul className="list-disc list-inside space-y-2">
-            <li>Documento de identificação oficial com foto (RG, CNH).</li>
-            <li>CPF.</li>
-            <li>Carteira de trabalho e/ou outros documentos que comprovem a contribuição ao INSS.</li>
-            <li><strong>Atestado médico ou laudo legível:</strong> Deve conter o nome completo do paciente, data, assinatura, carimbo e CRM do médico, além do CID (Classificação Internacional de Doenças) e a sugestão de período de afastamento.</li>
-            <li>Exames, relatórios e receitas médicas que comprovem a doença e a incapacidade.</li>
-            <li>Para empregados: Declaração da empresa informando o último dia trabalhado.</li>
-        </ul>
+    <div className="mt-8 p-4 rounded-lg bg-blue-50 border-l-4 border-blue-400 text-blue-800">
+      <h3 className="font-bold">Como Agendar sua Perícia?</h3>
+      <p className="mt-2">O agendamento é o primeiro passo para solicitar seu benefício. Você pode fazer isso online pelo portal Meu INSS ou pelo telefone 135. Para facilitar, preparamos um guia passo a passo.</p>
+      <button
+        onClick={onOpenGuide}
+        className="mt-4 bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-md shadow-md transition-transform transform hover:scale-105"
+      >
+        Ver Guia de Agendamento
+      </button>
+    </div>
 
-        <h2 className="text-2xl font-semibold text-gray-800 mt-6 mb-3">💻 Como Agendar</h2>
-        <p>O agendamento da perícia pode ser realizado de duas formas:</p>
-        <ul className="list-disc list-inside space-y-2">
-            <li><strong>Pela internet:</strong> Através do portal ou aplicativo "Meu INSS".</li>
-            <li><strong>Por telefone:</strong> Ligando para o número 135.</li>
-        </ul>
-        <div className="mt-6 flex flex-col sm:flex-row gap-4">
-            <button
-                onClick={onOpenGuide}
-                className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-md shadow-md transition duration-150 ease-in-out transform hover:scale-105"
-            >
-                Ver Guia de Agendamento On-line
-            </button>
-            <a
-                href="tel:135"
-                className="block text-center bg-gray-600 hover:bg-gray-700 text-white font-semibold py-3 px-6 rounded-md shadow-md transition duration-150 ease-in-out"
-            >
-                Ligar para 135
-            </a>
-        </div>
-    </PageContainer>
+    <h2 className="text-2xl font-semibold text-gray-800 mt-8 mb-3">📱 Acesse pelo Celular</h2>
+    <p>Para facilitar o acesso aos serviços, você também pode baixar o aplicativo oficial Meu INSS no seu smartphone. Com ele, você pode agendar perícias, consultar extratos e muito mais, de forma rápida e segura.</p>
+    <div className="mt-4 flex flex-col sm:flex-row gap-4">
+        <a href="https://play.google.com/store/apps/details?id=br.gov.dataprev.meuinss" target="_blank" rel="noopener noreferrer" className="inline-flex items-center justify-center px-5 py-3 border border-transparent text-base font-medium rounded-md text-white bg-gray-800 hover:bg-gray-900 transition-transform transform hover:scale-105">
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+            </svg>
+            <span>Disponível no Google Play</span>
+        </a>
+        <a href="https://apps.apple.com/br/app/meu-inss-central-de-servi%C3%A7os/id1243048358" target="_blank" rel="noopener noreferrer" className="inline-flex items-center justify-center px-5 py-3 border border-transparent text-base font-medium rounded-md text-white bg-gray-800 hover:bg-gray-900 transition-transform transform hover:scale-105">
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+            </svg>
+            <span>Baixar na App Store</span>
+        </a>
+    </div>
+  </PageContainer>
 );

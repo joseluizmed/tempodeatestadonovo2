@@ -322,7 +322,7 @@ const App: React.FC = () => {
       <div className="relative bg-gray-800 text-white overflow-hidden">
         <div className="absolute inset-0">
           <img 
-              src="https://images.unsplash.com/photo-1600880292203-943068b2591a?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" 
+              src="https://images.unsplash.com/photo-1521791136064-7986c2920216?q=80&w=1169&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" 
               alt="Aperto de mãos simbolizando acordo e confiança" 
               className="w-full h-full object-cover"
           />
