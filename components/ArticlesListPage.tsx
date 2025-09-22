@@ -56,6 +56,27 @@ const ArticlesListPage: React.FC = () => {
         fetchArticles();
     }, []);
 
+    useEffect(() => {
+        const scriptId = 'monetag-interstitial-script';
+        if (document.getElementById(scriptId)) {
+            return;
+        }
+        const script = document.createElement('script');
+        script.id = scriptId;
+        script.async = true;
+        script.dataset.cfasync = 'false';
+        script.src = "https://jsc.monetag.com/9916519/tag.min.js";
+        document.body.appendChild(script);
+
+        return () => {
+            const existingScript = document.getElementById(scriptId);
+            if (existingScript) {
+                existingScript.remove();
+            }
+        };
+    }, []);
+
+
     return (
         <PageContainer title="Perícia Médica [Dúvidas e Respostas]">
             {loading && <p className="text-center text-gray-500 py-10">Carregando artigos...</p>}

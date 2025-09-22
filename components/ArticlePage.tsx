@@ -44,6 +44,26 @@ const ArticlePage: React.FC = () => {
         fetchArticle();
     }, [slug]);
 
+    useEffect(() => {
+        const scriptId = 'monetag-interstitial-script';
+        if (document.getElementById(scriptId)) {
+            return;
+        }
+        const script = document.createElement('script');
+        script.id = scriptId;
+        script.async = true;
+        script.dataset.cfasync = 'false';
+        script.src = "https://jsc.monetag.com/9916519/tag.min.js";
+        document.body.appendChild(script);
+
+        return () => {
+            const existingScript = document.getElementById(scriptId);
+            if (existingScript) {
+                existingScript.remove();
+            }
+        };
+    }, []);
+
     if (loading) {
         return (
             <div className="max-w-4xl mx-auto my-8 p-10">
