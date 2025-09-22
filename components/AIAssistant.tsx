@@ -26,6 +26,9 @@ const AIAssistant: React.FC<AIAssistantProps> = ({ contextTitle }) => {
     setAnswer('');
     setLastQuestion(question);
 
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 25000); // 25-second client-side timeout
+
     try {
       const response = await fetch('/.netlify/functions/ask-ai', {
         method: 'POST',
@@ -33,7 +36,10 @@ const AIAssistant: React.FC<AIAssistantProps> = ({ contextTitle }) => {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({ question, contextTitle }),
+        signal: controller.signal, // Pass the abort signal to the fetch request
       });
+
+      clearTimeout(timeoutId); // The request finished, so we clear the timeout
 
       const data = await response.json();
 
@@ -44,8 +50,18 @@ const AIAssistant: React.FC<AIAssistantProps> = ({ contextTitle }) => {
       setAnswer(data.answer);
 
     } catch (e: any) {
+      clearTimeout(timeoutId); // Ensure timeout is cleared on error as well
       console.error(e);
-      setError(e.message || "Desculpe, não foi possível processar sua pergunta no momento. Tente novamente mais tarde.");
+      let errorMessage = "Desculpe, não foi possível processar sua pergunta no momento. Tente novamente mais tarde.";
+
+      if (e.name === 'AbortError') {
+        errorMessage = "A requisição demorou muito para responder (timeout). Por favor, tente novamente.";
+      } else if (e.message && e.message.includes('Failed to fetch')) {
+        errorMessage = "Ocorreu um erro de comunicação com o servidor. Isso pode ser devido a um problema de rede ou o serviço pode estar temporariamente indisponível.";
+      } else if (e.message) {
+        errorMessage = e.message;
+      }
+      setError(errorMessage);
     } finally {
       setIsLoading(false);
       setQuestion('');

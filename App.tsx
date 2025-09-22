@@ -1,6 +1,7 @@
+
 import React, { useState, useCallback, useEffect } from 'react';
 import { HashRouter, Routes, Route, Link } from 'react-router-dom';
-import { MedicalCertificate, AnalysisResults, CertificateStatus, DetailedTimelineSegment, Article } from './types';
+import { MedicalCertificate, AnalysisResults, DetailedTimelineSegment, Article } from './types';
 import CertificateForm from './components/CertificateForm';
 import AnalysisDisplay from './components/AnalysisDisplay';
 import { AboutPage, PrivacyPolicyPage, ContactPage, INSSPage } from './components/StaticPages';
@@ -9,7 +10,6 @@ import InssGuideModal from './components/InssGuideModal';
 import InssActionCard from './components/InssActionCard';
 import ArticlesListPage from './components/ArticlesListPage';
 import ArticlePage from './components/ArticlePage';
-import { formatDate, addDays, differenceInDays } from './utils/dateUtils';
 import ScrollToTop from './components/ScrollToTop';
 
 // This component is copied from ArticlesListPage to be used on the new HomePage
@@ -36,204 +36,70 @@ const App: React.FC = () => {
   const [editingCertificateId, setEditingCertificateId] = useState<string | null>(null);
   const [isGuideModalOpen, setGuideModalOpen] = useState(false);
 
-  const analyzeCertificates = useCallback((certsInput: MedicalCertificate[]): {
-    results: AnalysisResults,
-    processedCerts: MedicalCertificate[]
-  } => {
-    const initialEmptyResults: AnalysisResults = {
-      longestContinuousLeave: { startDate: null, endDate: null, totalDays: 0 },
-      totalCertificates: 0,
-      continuousSequenceCount: 0,
-      overlappingCertificatesCount: 0,
-      gapCount: 0,
-      totalNonCoveredDaysInGaps: 0,
-      timelineSegments: [],
-      allDates: []
-    };
-
-    const validCerts = certsInput.filter(c => 
-      c.startDate instanceof Date && !isNaN(c.startDate.getTime()) &&
-      c.endDate instanceof Date && !isNaN(c.endDate.getTime()) &&
-      c.startDate.getTime() <= c.endDate.getTime() // Ensure start is not after end
-    );
-
-    if (validCerts.length === 0) {
-      return {
-        results: initialEmptyResults,
-        processedCerts: []
-      };
-    }
-
-    const sortedCerts = [...validCerts].sort((a, b) => a.startDate.getTime() - b.startDate.getTime());
-    
-    const certsWithDisplayIdAndStatus = sortedCerts.map((cert, index, arr) => {
-        let status: CertificateStatus = CertificateStatus.FIRST;
-        if (index > 0) {
-            const prevCert = arr[index-1]; 
-            if (addDays(prevCert.endDate, 1).getTime() === cert.startDate.getTime()) {
-                status = CertificateStatus.CONTINUOUS;
-            } else if (cert.startDate <= prevCert.endDate) { 
-                status = CertificateStatus.OVERLAPPING; 
-            } else { 
-                status = CertificateStatus.NON_CONTINUOUS;
-            }
-        }
-        return { ...cert, displayId: index + 1, status };
-    });
-    
-    let allDatesSet = new Set<number>();
-    certsWithDisplayIdAndStatus.forEach(c => { 
-      allDatesSet.add(c.startDate.getTime());
-      allDatesSet.add(addDays(c.endDate, 1).getTime()); 
-    });
-    
-    const uniqueSortedDates = Array.from(allDatesSet).sort((a, b) => a - b).map(time => new Date(time));
-    
-    if (uniqueSortedDates.length === 0 && certsWithDisplayIdAndStatus.length > 0) {
-        return { 
-            results: { ...initialEmptyResults, totalCertificates: certsWithDisplayIdAndStatus.length },
-            processedCerts: certsWithDisplayIdAndStatus
-        };
-    }
-
-    if (uniqueSortedDates.length <= 1 && certsWithDisplayIdAndStatus.length === 1 ) {
-        const singleCert = certsWithDisplayIdAndStatus[0];
-        const segments: DetailedTimelineSegment[] = [{
-            id: `seg-${singleCert.startDate.getTime()}`,
-            startDate: singleCert.startDate,
-            endDate: singleCert.endDate,
-            type: 'covered',
-            durationDays: singleCert.days,
-            certificatesInvolved: [singleCert.id],
-            tooltip: `${formatDate(singleCert.startDate)} - ${formatDate(singleCert.endDate)} (${singleCert.days} dia${singleCert.days > 1 ? 's' : ''}, Coberto)`
-        }];
-        return {
-            results: {
-                longestContinuousLeave: { startDate: singleCert.startDate, endDate: singleCert.endDate, totalDays: singleCert.days },
-                totalCertificates: 1,
-                continuousSequenceCount: 0, 
-                overlappingCertificatesCount: 0, 
-                gapCount: 0,
-                totalNonCoveredDaysInGaps: 0,
-                timelineSegments: segments,
-                allDates: [singleCert.startDate, singleCert.endDate]
-            },
-            processedCerts: certsWithDisplayIdAndStatus
-        };
-    }
-    
-    if (uniqueSortedDates.length === 0) { 
-         return { 
-            results: initialEmptyResults,
-            processedCerts: []
-        };
-    }
-
-    const timelineSegments: DetailedTimelineSegment[] = [];
-    for (let i = 0; i < uniqueSortedDates.length -1; i++) {
-        const intervalStart = uniqueSortedDates[i];
-        const intervalEnd = addDays(uniqueSortedDates[i+1], -1); 
-        
-        if (intervalStart.getTime() > intervalEnd.getTime()) continue; 
-
-        const midPoint = new Date(intervalStart.getTime() + (intervalEnd.getTime() - intervalStart.getTime()) / 2);
-        
-        const activeCertsInInterval = certsWithDisplayIdAndStatus.filter(
-            c => c.startDate <= midPoint && c.endDate >= midPoint
-        );
-        const coverageCount = activeCertsInInterval.length;
-        const duration = differenceInDays(intervalStart, intervalEnd) + 1;
-
-        if (duration <= 0) continue; // Should not happen with valid intervalStart/End
-
-        let type: 'covered' | 'overlapping' | 'gap';
-        let typeTooltip: string;
-        if (coverageCount === 0) { type = 'gap'; typeTooltip = 'Não Coberto'; }
-        else if (coverageCount === 1) { type = 'covered'; typeTooltip = 'Coberto'; }
-        else { type = 'overlapping'; typeTooltip = 'Sobreposto'; }
-        
-        timelineSegments.push({
-            id: `seg-${intervalStart.getTime()}`,
-            startDate: intervalStart,
-            endDate: intervalEnd,
-            type: type,
-            durationDays: duration,
-            certificatesInvolved: activeCertsInInterval.map(c => c.id),
-            tooltip: `${formatDate(intervalStart)} - ${formatDate(intervalEnd)} (${duration} dia${duration > 1 ? 's' : ''}, ${typeTooltip})`
-        });
-    }
-    
-    let longestContinuousLeave = { startDate: null as Date | null, endDate: null as Date | null, totalDays: 0 };
-    let currentLeaveStart: Date | null = null;
-    let currentLeaveDays = 0;
-
-    timelineSegments.forEach(seg => {
-      if (seg.type === 'covered' || seg.type === 'overlapping') {
-        if (currentLeaveStart === null) {
-          currentLeaveStart = seg.startDate;
-        }
-        currentLeaveDays += seg.durationDays;
-        if (currentLeaveDays > longestContinuousLeave.totalDays) {
-          longestContinuousLeave = { startDate: currentLeaveStart, endDate: seg.endDate, totalDays: currentLeaveDays };
-        }
-      } else { 
-        currentLeaveStart = null;
-        currentLeaveDays = 0;
-      }
-    });
-
-    const totalNonCoveredDaysInGaps = timelineSegments.filter(s => s.type === 'gap').reduce((sum, s) => sum + s.durationDays, 0);
-    const gapCount = timelineSegments.filter(s => s.type === 'gap').length;
-    
-    let continuousSequenceCount = 0;
-    for(let i = 0; i < certsWithDisplayIdAndStatus.length; i++) {
-        if(certsWithDisplayIdAndStatus[i].status === CertificateStatus.CONTINUOUS) {
-            continuousSequenceCount++;
-        }
-    }
-    
-    const overlappingCertSet = new Set<string>();
-    timelineSegments.filter(s => s.type === 'overlapping').forEach(s => {
-        s.certificatesInvolved.forEach(certId => overlappingCertSet.add(certId));
-    });
-
-    let timelineEffectiveStart: Date | null = null;
-    let timelineEffectiveEnd: Date | null = null;
-
-    if (timelineSegments.length > 0) {
-        timelineEffectiveStart = timelineSegments[0].startDate;
-        timelineEffectiveEnd = timelineSegments[timelineSegments.length - 1].endDate;
-    } else if (uniqueSortedDates.length > 0) { // Fallback if no segments but there are dates (e.g. single point in time)
-        timelineEffectiveStart = uniqueSortedDates[0];
-        timelineEffectiveEnd = addDays(uniqueSortedDates[uniqueSortedDates.length - 1], -1);
-        if (timelineEffectiveStart && timelineEffectiveEnd && timelineEffectiveStart.getTime() > timelineEffectiveEnd.getTime()) {
-           // If only one unique date point, end becomes start for a single day representation
-           timelineEffectiveEnd = timelineEffectiveStart;
-        }
-    }
-        
-    const analysisData: AnalysisResults = {
-      longestContinuousLeave,
-      totalCertificates: certsWithDisplayIdAndStatus.length,
-      continuousSequenceCount,
-      overlappingCertificatesCount: overlappingCertSet.size,
-      gapCount,
-      totalNonCoveredDaysInGaps,
-      timelineSegments: timelineSegments,
-      allDates: timelineEffectiveStart && timelineEffectiveEnd ? [timelineEffectiveStart, timelineEffectiveEnd] : []
-    };
-
-    return {
-        results: analysisData,
-        processedCerts: certsWithDisplayIdAndStatus
-    };
-  }, []); 
-
   useEffect(() => {
-    const { results, processedCerts } = analyzeCertificates(rawCertificates);
-    setAnalysisResults(results);
-    setProcessedCertificatesForDisplay(processedCerts);
-  }, [rawCertificates, analyzeCertificates]);
+    // If there are no certificates, reset the state and do nothing.
+    if (rawCertificates.length === 0) {
+      setAnalysisResults({
+        longestContinuousLeave: { startDate: null, endDate: null, totalDays: 0 },
+        totalCertificates: 0,
+        continuousSequenceCount: 0,
+        overlappingCertificatesCount: 0,
+        gapCount: 0,
+        totalNonCoveredDaysInGaps: 0,
+        timelineSegments: [],
+        allDates: [],
+      });
+      setProcessedCertificatesForDisplay([]);
+      return;
+    }
+
+    // Create a new worker to perform the analysis in the background.
+    const worker = new Worker(new URL('./analysis.worker.ts', import.meta.url), { type: 'module' });
+
+    // Handle messages received from the worker.
+    worker.onmessage = (e) => {
+      const { results, processedCerts } = e.data;
+
+      // The dates are serialized as strings when passed from the worker.
+      // We need to "re-hydrate" them back into Date objects.
+      const rehydratedResults: AnalysisResults = {
+        ...results,
+        longestContinuousLeave: {
+          startDate: results.longestContinuousLeave.startDate ? new Date(results.longestContinuousLeave.startDate) : null,
+          endDate: results.longestContinuousLeave.endDate ? new Date(results.longestContinuousLeave.endDate) : null,
+          totalDays: results.longestContinuousLeave.totalDays
+        },
+        timelineSegments: results.timelineSegments.map((seg: DetailedTimelineSegment) => ({
+            ...seg,
+            startDate: new Date(seg.startDate),
+            endDate: new Date(seg.endDate),
+        })),
+        allDates: results.allDates.map((d: string) => new Date(d)),
+      };
+      
+      const rehydratedCerts = processedCerts.map((cert: MedicalCertificate) => ({
+          ...cert,
+          startDate: new Date(cert.startDate),
+          endDate: new Date(cert.endDate),
+      }));
+
+      setAnalysisResults(rehydratedResults);
+      setProcessedCertificatesForDisplay(rehydratedCerts);
+    };
+
+    worker.onerror = (e) => {
+        console.error('Error from analysis worker:', e);
+    };
+
+    // Send the raw certificate data to the worker to start the analysis.
+    worker.postMessage(rawCertificates);
+
+    // Clean up the worker when the component unmounts or dependencies change.
+    return () => {
+      worker.terminate();
+    };
+  }, [rawCertificates]);
+
 
   const handleSaveCertificate = useCallback((newCertData: Omit<MedicalCertificate, 'id' | 'displayId' | 'status'>, editingId: string | null) => {
     if (editingId) {

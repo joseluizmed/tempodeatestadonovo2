@@ -37,6 +37,7 @@ export const handler = async (event) => {
         config: {
             systemInstruction: systemInstruction,
             temperature: 0.5,
+            thinkingConfig: { thinkingBudget: 0 }, // Disable thinking for lower latency
         },
     });
     
