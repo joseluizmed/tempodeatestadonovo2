@@ -3,7 +3,6 @@ import { useParams, Link } from 'react-router-dom';
 import { marked } from 'marked';
 import { ArticleDetails } from '../types';
 import { parseMarkdown } from '../utils/markdownParser';
-import AdSense from './AdSense';
 import CommunityOrAIAssistant from './CommunityOrAIAssistant';
 
 const ArticlePage: React.FC = () => {
@@ -104,13 +103,6 @@ const ArticlePage: React.FC = () => {
                                 <div dangerouslySetInnerHTML={{ __html: article.body }} />
                             </article>
                             
-                            <div className="my-12">
-                                <AdSense
-                                    adClient="ca-pub-2071700067184743"
-                                    adSlot="YOUR_AD_SLOT_ID_HERE_ARTICLE_DETAIL"
-                                />
-                            </div>
-
                             <div className="pt-8 mt-12 border-t border-gray-300">
                                 <CommunityOrAIAssistant contextTitle={article.title} />
                             </div>

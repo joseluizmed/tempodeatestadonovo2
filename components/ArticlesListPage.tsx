@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Article } from '../types';
-import AdSense from './AdSense';
 import CommunityOrAIAssistant from './CommunityOrAIAssistant';
 
 const PageContainer: React.FC<{title: string; children: React.ReactNode}> = ({ title, children }) => (
@@ -95,12 +94,6 @@ const ArticlesListPage: React.FC = () => {
             
             {!loading && (
                 <>
-                    <div className="my-12">
-                        <AdSense
-                            adClient="ca-pub-2071700067184743"
-                            adSlot="YOUR_AD_SLOT_ID_HERE_ARTICLES_LIST"
-                        />
-                    </div>
                     <div className="pt-8 mt-12 border-t border-gray-300">
                         <CommunityOrAIAssistant />
                     </div>
