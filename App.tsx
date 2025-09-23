@@ -1,4 +1,5 @@
 
+
 import React, { useState, useCallback, useEffect } from 'react';
 import { HashRouter, Routes, Route, Link } from 'react-router-dom';
 import { MedicalCertificate, AnalysisResults, DetailedTimelineSegment, Article } from './types';
@@ -99,6 +100,29 @@ const App: React.FC = () => {
       worker.terminate();
     };
   }, [rawCertificates]);
+
+  // Handle alternating In-Page Push ads
+  useEffect(() => {
+    const adZones = ['9916510', '9916505'];
+    const storageKey = 'lastShownInPagePush';
+    const scriptId = 'monetag-inpage-push-script';
+
+    if (document.getElementById(scriptId)) {
+        return;
+    }
+
+    const lastShown = localStorage.getItem(storageKey);
+    const zoneToShow = lastShown === adZones[0] ? adZones[1] : adZones[0];
+
+    const script = document.createElement('script');
+    script.id = scriptId;
+    script.src = `https://jsc.monetag.com/${zoneToShow}/tag.min.js`;
+    script.async = true;
+    script.dataset.cfasync = 'false';
+    document.body.appendChild(script);
+
+    localStorage.setItem(storageKey, zoneToShow);
+  }, []);
 
 
   const handleSaveCertificate = useCallback((newCertData: Omit<MedicalCertificate, 'id' | 'displayId' | 'status'>, editingId: string | null) => {
@@ -282,68 +306,118 @@ const App: React.FC = () => {
     </>
   );
 
-  const CalculatorPage = () => (
-    <>
-      <div className="container mx-auto px-2 sm:px-4 py-8">
-        <h1 className="text-3xl md:text-4xl font-bold text-gray-800 mb-8 text-center">Calculadora de Tempo de Afastamento por Atestado Médico</h1>
-        <div className="flex flex-col lg:flex-row gap-8">
-          <div className="lg:w-1/3">
-            <CertificateForm 
-              onSaveCertificate={handleSaveCertificate}
-              editingCertificate={certificateToEdit || null}
-              onCancelEdit={handleCancelEdit}
-            />
-          </div>
-          <div className="lg:w-2/3">
-            <div className="space-y-8">
-              <AnalysisDisplay
-                certificates={processedCertificatesForDisplay} 
-                analysisResults={analysisResults}
-                onRemoveCertificate={handleRemoveCertificate}
-                onEditCertificate={handleStartEdit}
-                onNewAnalysis={handleNewAnalysis}
-              />
-              <InssActionCard 
-                analysisResults={analysisResults} 
-                onOpenGuide={() => setGuideModalOpen(true)} 
+  const CalculatorPage = () => {
+    useEffect(() => {
+      const PUNCH_IN_AD_STATE_KEY = 'monetagPunchInState';
+      const PUNCH_IN_ZONE_ID = '9916519';
+      const AD_SEQUENCE = ['/beneficio-inss', '/calculadora-de-atestado', '/artigos'];
+      const currentPageIdentifier = '/calculadora-de-atestado';
+  
+      const getNextPageIdentifier = (currentIdentifier: string) => {
+        const currentIndex = AD_SEQUENCE.indexOf(currentIdentifier);
+        const nextIndex = (currentIndex + 1) % AD_SEQUENCE.length;
+        return AD_SEQUENCE[nextIndex];
+      };
+  
+      let adState;
+      try {
+        const storedState = localStorage.getItem(PUNCH_IN_AD_STATE_KEY);
+        adState = storedState ? JSON.parse(storedState) : { nextToShowOn: AD_SEQUENCE[0] };
+      } catch (e) {
+        adState = { nextToShowOn: AD_SEQUENCE[0] };
+      }
+  
+      if (currentPageIdentifier === adState.nextToShowOn) {
+        const scriptId = 'monetag-vignette-script';
+        const existingScript = document.getElementById(scriptId);
+        if (existingScript) {
+            existingScript.remove();
+        }
+        
+        const script = document.createElement('script');
+        script.id = scriptId;
+        script.dataset.zone = PUNCH_IN_ZONE_ID;
+        script.src = 'https://groleegni.net/vignette.min.js';
+        
+        document.body.appendChild(script);
+  
+        const nextState = {
+          nextToShowOn: getNextPageIdentifier(currentPageIdentifier),
+        };
+        localStorage.setItem(PUNCH_IN_AD_STATE_KEY, JSON.stringify(nextState));
+  
+        return () => {
+          const scriptOnUnmount = document.getElementById(scriptId);
+          if (scriptOnUnmount) {
+            scriptOnUnmount.remove();
+          }
+        };
+      }
+    }, []);
+
+    return (
+      <>
+        <div className="container mx-auto px-2 sm:px-4 py-8">
+          <h1 className="text-3xl md:text-4xl font-bold text-gray-800 mb-8 text-center">Calculadora de Tempo de Afastamento por Atestado Médico</h1>
+          <div className="flex flex-col lg:flex-row gap-8">
+            <div className="lg:w-1/3">
+              <CertificateForm 
+                onSaveCertificate={handleSaveCertificate}
+                editingCertificate={certificateToEdit || null}
+                onCancelEdit={handleCancelEdit}
               />
             </div>
+            <div className="lg:w-2/3">
+              <div className="space-y-8">
+                <AnalysisDisplay
+                  certificates={processedCertificatesForDisplay} 
+                  analysisResults={analysisResults}
+                  onRemoveCertificate={handleRemoveCertificate}
+                  onEditCertificate={handleStartEdit}
+                  onNewAnalysis={handleNewAnalysis}
+                />
+                <InssActionCard 
+                  analysisResults={analysisResults} 
+                  onOpenGuide={() => setGuideModalOpen(true)} 
+                />
+              </div>
+            </div>
           </div>
-        </div>
-        
-        <section className="mt-12 py-8 px-6 bg-white shadow-lg rounded-lg border border-gray-200">
-          <h2 className="text-2xl font-semibold text-gray-700 mb-6 pb-3 border-b border-gray-300">🧭 Informações sobre o uso da ferramenta</h2>
-          <div className="prose prose-lg max-w-none text-gray-700 space-y-4">
-              <p>Esta aplicação foi desenvolvida para facilitar o cálculo e a visualização dos períodos de afastamento médico de forma clara e automatizada. O uso é simples e intuitivo, pensado para atender tanto o público geral quanto profissionais da área.</p>
-              
-              <h3>🔹 Como utilizar</h3>
-              <ul>
-                  <li><strong>Adicionar/Editar Atestado:</strong> Informe a data de início e, em seguida, escolha entre indicar a data de término ou a quantidade de dias de afastamento. Clique em "Adicionar" ou pressione a tecla "Enter" para incluir um novo atestado ou "Salvar Alterações" para atualizar um registro existente.</li>
-                  <li><strong>Análise Automática:</strong> Os dados são processados automaticamente, exibindo o total de dias, o maior afastamento contínuo e a visualização na linha do tempo.</li>
-                  <li>
-                      <strong>Linha do Tempo:</strong>
-                      <ul>
-                          <li>🟩 Verde – Dias cobertos por um único atestado.</li>
-                          <li>🟨 Amarelo – Dias com sobreposição de atestados.</li>
-                          <li>🟥 Vermelho – Dias não cobertos entre afastamentos.</li>
-                          <li>🔷 Borda Azul – Indica o maior afastamento contínuos.</li>
-                      </ul>
-                  </li>
-                  <li><strong>Atestados Registrados:</strong> Visualize todos os atestados em uma tabela interativa, com opção de edição ou exclusão. A classificação (Contínuo, Não Contínuo etc.) é gerada com base na ordem cronológica.</li>
-                  <li><strong>Nova Análise:</strong> Clique neste botão para limpar os dados e iniciar uma nova simulação.</li>
-              </ul>
+          
+          <section className="mt-12 py-8 px-6 bg-white shadow-lg rounded-lg border border-gray-200">
+            <h2 className="text-2xl font-semibold text-gray-700 mb-6 pb-3 border-b border-gray-300">🧭 Informações sobre o uso da ferramenta</h2>
+            <div className="prose prose-lg max-w-none text-gray-700 space-y-4">
+                <p>Esta aplicação foi desenvolvida para facilitar o cálculo e a visualização dos períodos de afastamento médico de forma clara e automatizada. O uso é simples e intuitivo, pensado para atender tanto o público geral quanto profissionais da área.</p>
+                
+                <h3>🔹 Como utilizar</h3>
+                <ul>
+                    <li><strong>Adicionar/Editar Atestado:</strong> Informe a data de início e, em seguida, escolha entre indicar a data de término ou a quantidade de dias de afastamento. Clique em "Adicionar" ou pressione a tecla "Enter" para incluir um novo atestado ou "Salvar Alterações" para atualizar um registro existente.</li>
+                    <li><strong>Análise Automática:</strong> Os dados são processados automaticamente, exibindo o total de dias, o maior afastamento contínuo e a visualização na linha do tempo.</li>
+                    <li>
+                        <strong>Linha do Tempo:</strong>
+                        <ul>
+                            <li>🟩 Verde – Dias cobertos por um único atestado.</li>
+                            <li>🟨 Amarelo – Dias com sobreposição de atestados.</li>
+                            <li>🟥 Vermelho – Dias não cobertos entre afastamentos.</li>
+                            <li>🔷 Borda Azul – Indica o maior afastamento contínuos.</li>
+                        </ul>
+                    </li>
+                    <li><strong>Atestados Registrados:</strong> Visualize todos os atestados em uma tabela interativa, com opção de edição ou exclusão. A classificação (Contínuo, Não Contínuo etc.) é gerada com base na ordem cronológica.</li>
+                    <li><strong>Nova Análise:</strong> Clique neste botão para limpar os dados e iniciar uma nova simulação.</li>
+                </ul>
 
-              <h3>⚠️ Atenção</h3>
-              <ul>
-                  <li>O cálculo inclui tanto a data de início quanto a de término. Exemplo: 01/01 a 05/01 = 5 dias.</li>
-                  <li>A continuidade considera atestados que se sucedem sem interrupção entre as datas.</li>
-                  <li>Esta ferramenta tem caráter informativo e não substitui a análise de profissionais especializados (como médicos peritos, setores de RH ou assessoria jurídica). Normas específicas podem variar conforme o contexto e a legislação vigente.</li>
-              </ul>
-          </div>
-        </section>
-      </div>
-    </>
-  );
+                <h3>⚠️ Atenção</h3>
+                <ul>
+                    <li>O cálculo inclui tanto a data de início quanto a de término. Exemplo: 01/01 a 05/01 = 5 dias.</li>
+                    <li>A continuidade considera atestados que se sucedem sem interrupção entre as datas.</li>
+                    <li>Esta ferramenta tem caráter informativo e não substitui a análise de profissionais especializados (como médicos peritos, setores de RH ou assessoria jurídica). Normas específicas podem variar conforme o contexto e a legislação vigente.</li>
+                </ul>
+            </div>
+          </section>
+        </div>
+      </>
+    );
+  };
 
   return (
     <HashRouter>

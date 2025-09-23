@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 
 const PageContainer: React.FC<{title: string; children: React.ReactNode}> = ({ title, children }) => (
@@ -147,8 +147,57 @@ export const ContactPage: React.FC = () => {
   );
 };
 
-export const INSSPage: React.FC<{ onOpenGuide: () => void }> = ({ onOpenGuide }) => (
-  <PageContainer title="📄 Benefício por Incapacidade Temporária (Antigo Auxílio-Doença)">
+export const INSSPage: React.FC<{ onOpenGuide: () => void }> = ({ onOpenGuide }) => {
+  useEffect(() => {
+    const PUNCH_IN_AD_STATE_KEY = 'monetagPunchInState';
+    const PUNCH_IN_ZONE_ID = '9916519';
+    const AD_SEQUENCE = ['/beneficio-inss', '/calculadora-de-atestado', '/artigos'];
+    const currentPageIdentifier = '/beneficio-inss';
+
+    const getNextPageIdentifier = (currentIdentifier: string) => {
+      const currentIndex = AD_SEQUENCE.indexOf(currentIdentifier);
+      const nextIndex = (currentIndex + 1) % AD_SEQUENCE.length;
+      return AD_SEQUENCE[nextIndex];
+    };
+
+    let adState;
+    try {
+      const storedState = localStorage.getItem(PUNCH_IN_AD_STATE_KEY);
+      adState = storedState ? JSON.parse(storedState) : { nextToShowOn: AD_SEQUENCE[0] };
+    } catch (e) {
+      adState = { nextToShowOn: AD_SEQUENCE[0] };
+    }
+
+    if (currentPageIdentifier === adState.nextToShowOn) {
+      const scriptId = 'monetag-vignette-script';
+      const existingScript = document.getElementById(scriptId);
+      if (existingScript) {
+          existingScript.remove();
+      }
+      
+      const script = document.createElement('script');
+      script.id = scriptId;
+      script.dataset.zone = PUNCH_IN_ZONE_ID;
+      script.src = 'https://groleegni.net/vignette.min.js';
+      
+      document.body.appendChild(script);
+
+      const nextState = {
+        nextToShowOn: getNextPageIdentifier(currentPageIdentifier),
+      };
+      localStorage.setItem(PUNCH_IN_AD_STATE_KEY, JSON.stringify(nextState));
+
+      return () => {
+        const scriptOnUnmount = document.getElementById(scriptId);
+        if (scriptOnUnmount) {
+          scriptOnUnmount.remove();
+        }
+      };
+    }
+  }, []);
+
+  return (
+    <PageContainer title="📄 Benefício por Incapacidade Temporária (Antigo Auxílio-Doença)">
     <p>O Benefício por Incapacidade Temporária, conhecido anteriormente como Auxílio-Doença, é um direito do trabalhador segurado pelo INSS que se encontra temporariamente incapacitado para suas atividades laborais por motivo de doença ou acidente.</p>
     
     <h2 className="text-2xl font-semibold text-gray-800 mt-6 mb-3">✅ Quem tem direito?</h2>
@@ -198,4 +247,5 @@ export const INSSPage: React.FC<{ onOpenGuide: () => void }> = ({ onOpenGuide })
         </a>
     </div>
   </PageContainer>
-);
+  );
+};
