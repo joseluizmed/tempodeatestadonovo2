@@ -1,5 +1,6 @@
 
 
+
 import React, { useState, useCallback, useEffect } from 'react';
 import { HashRouter, Routes, Route, Link } from 'react-router-dom';
 import { MedicalCertificate, AnalysisResults, DetailedTimelineSegment, Article } from './types';
@@ -12,6 +13,7 @@ import InssActionCard from './components/InssActionCard';
 import ArticlesListPage from './components/ArticlesListPage';
 import ArticlePage from './components/ArticlePage';
 import ScrollToTop from './components/ScrollToTop';
+import AdManager from './components/AdManager';
 
 // This component is copied from ArticlesListPage to be used on the new HomePage
 const ArticleCard: React.FC<{ article: Article }> = ({ article }) => (
@@ -100,29 +102,6 @@ const App: React.FC = () => {
       worker.terminate();
     };
   }, [rawCertificates]);
-
-  // Handle alternating In-Page Push ads
-  useEffect(() => {
-    const adZones = ['9916510', '9916505'];
-    const storageKey = 'lastShownInPagePush';
-    const scriptId = 'monetag-inpage-push-script';
-
-    if (document.getElementById(scriptId)) {
-        return;
-    }
-
-    const lastShown = localStorage.getItem(storageKey);
-    const zoneToShow = lastShown === adZones[0] ? adZones[1] : adZones[0];
-
-    const script = document.createElement('script');
-    script.id = scriptId;
-    script.src = `https://jsc.monetag.com/${zoneToShow}/tag.min.js`;
-    script.async = true;
-    script.dataset.cfasync = 'false';
-    document.body.appendChild(script);
-
-    localStorage.setItem(storageKey, zoneToShow);
-  }, []);
 
 
   const handleSaveCertificate = useCallback((newCertData: Omit<MedicalCertificate, 'id' | 'displayId' | 'status'>, editingId: string | null) => {
@@ -308,51 +287,22 @@ const App: React.FC = () => {
 
   const CalculatorPage = () => {
     useEffect(() => {
-      const PUNCH_IN_AD_STATE_KEY = 'monetagPunchInState';
-      const PUNCH_IN_ZONE_ID = '9916519';
-      const AD_SEQUENCE = ['/beneficio-inss', '/calculadora-de-atestado', '/artigos'];
-      const currentPageIdentifier = '/calculadora-de-atestado';
-  
-      const getNextPageIdentifier = (currentIdentifier: string) => {
-        const currentIndex = AD_SEQUENCE.indexOf(currentIdentifier);
-        const nextIndex = (currentIndex + 1) % AD_SEQUENCE.length;
-        return AD_SEQUENCE[nextIndex];
-      };
-  
-      let adState;
-      try {
-        const storedState = localStorage.getItem(PUNCH_IN_AD_STATE_KEY);
-        adState = storedState ? JSON.parse(storedState) : { nextToShowOn: AD_SEQUENCE[0] };
-      } catch (e) {
-        adState = { nextToShowOn: AD_SEQUENCE[0] };
-      }
-  
-      if (currentPageIdentifier === adState.nextToShowOn) {
+        const PUNCH_IN_ZONE_ID = '9916519';
         const scriptId = 'monetag-vignette-script';
-        const existingScript = document.getElementById(scriptId);
-        if (existingScript) {
-            existingScript.remove();
-        }
-        
+
         const script = document.createElement('script');
         script.id = scriptId;
         script.dataset.zone = PUNCH_IN_ZONE_ID;
         script.src = 'https://groleegni.net/vignette.min.js';
         
         document.body.appendChild(script);
-  
-        const nextState = {
-          nextToShowOn: getNextPageIdentifier(currentPageIdentifier),
-        };
-        localStorage.setItem(PUNCH_IN_AD_STATE_KEY, JSON.stringify(nextState));
-  
+
         return () => {
-          const scriptOnUnmount = document.getElementById(scriptId);
-          if (scriptOnUnmount) {
-            scriptOnUnmount.remove();
-          }
+            const scriptOnUnmount = document.getElementById(scriptId);
+            if (scriptOnUnmount) {
+                scriptOnUnmount.remove();
+            }
         };
-      }
     }, []);
 
     return (
@@ -422,6 +372,7 @@ const App: React.FC = () => {
   return (
     <HashRouter>
       <ScrollToTop />
+      <AdManager />
       <div className="flex flex-col min-h-screen bg-gray-50">
         <Header />
         <main className="flex-grow">

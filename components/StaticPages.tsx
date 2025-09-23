@@ -149,51 +149,22 @@ export const ContactPage: React.FC = () => {
 
 export const INSSPage: React.FC<{ onOpenGuide: () => void }> = ({ onOpenGuide }) => {
   useEffect(() => {
-    const PUNCH_IN_AD_STATE_KEY = 'monetagPunchInState';
     const PUNCH_IN_ZONE_ID = '9916519';
-    const AD_SEQUENCE = ['/beneficio-inss', '/calculadora-de-atestado', '/artigos'];
-    const currentPageIdentifier = '/beneficio-inss';
+    const scriptId = 'monetag-vignette-script';
 
-    const getNextPageIdentifier = (currentIdentifier: string) => {
-      const currentIndex = AD_SEQUENCE.indexOf(currentIdentifier);
-      const nextIndex = (currentIndex + 1) % AD_SEQUENCE.length;
-      return AD_SEQUENCE[nextIndex];
-    };
+    const script = document.createElement('script');
+    script.id = scriptId;
+    script.dataset.zone = PUNCH_IN_ZONE_ID;
+    script.src = 'https://groleegni.net/vignette.min.js';
 
-    let adState;
-    try {
-      const storedState = localStorage.getItem(PUNCH_IN_AD_STATE_KEY);
-      adState = storedState ? JSON.parse(storedState) : { nextToShowOn: AD_SEQUENCE[0] };
-    } catch (e) {
-      adState = { nextToShowOn: AD_SEQUENCE[0] };
-    }
+    document.body.appendChild(script);
 
-    if (currentPageIdentifier === adState.nextToShowOn) {
-      const scriptId = 'monetag-vignette-script';
-      const existingScript = document.getElementById(scriptId);
-      if (existingScript) {
-          existingScript.remove();
-      }
-      
-      const script = document.createElement('script');
-      script.id = scriptId;
-      script.dataset.zone = PUNCH_IN_ZONE_ID;
-      script.src = 'https://groleegni.net/vignette.min.js';
-      
-      document.body.appendChild(script);
-
-      const nextState = {
-        nextToShowOn: getNextPageIdentifier(currentPageIdentifier),
-      };
-      localStorage.setItem(PUNCH_IN_AD_STATE_KEY, JSON.stringify(nextState));
-
-      return () => {
+    return () => {
         const scriptOnUnmount = document.getElementById(scriptId);
         if (scriptOnUnmount) {
-          scriptOnUnmount.remove();
+            scriptOnUnmount.remove();
         }
-      };
-    }
+    };
   }, []);
 
   return (
