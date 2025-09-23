@@ -1,5 +1,4 @@
-import React, { useState, useCallback, useEffect } from 'react';
-import { marked } from 'marked';
+import React, { useState, useCallback } from 'react';
 
 interface AIAssistantProps {
   contextTitle?: string;
@@ -18,18 +17,6 @@ const AIAssistant: React.FC<AIAssistantProps> = ({ contextTitle }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
   const [lastQuestion, setLastQuestion] = useState('');
-  const [renderedAnswer, setRenderedAnswer] = useState('');
-
-  useEffect(() => {
-    const handler = setTimeout(() => {
-      if (answer) {
-        marked.parse(answer, { async: true, gfm: true }).then(html => setRenderedAnswer(html));
-      } else {
-        setRenderedAnswer('');
-      }
-    }, 100);
-    return () => clearTimeout(handler);
-  }, [answer]);
 
   const handleAsk = useCallback(async () => {
     if (!question.trim()) return;
@@ -39,6 +26,9 @@ const AIAssistant: React.FC<AIAssistantProps> = ({ contextTitle }) => {
     setAnswer('');
     setLastQuestion(question);
 
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 25000); // 25-second client-side timeout
+
     try {
       const response = await fetch('/.netlify/functions/ask-ai', {
         method: 'POST',
@@ -46,53 +36,32 @@ const AIAssistant: React.FC<AIAssistantProps> = ({ contextTitle }) => {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({ question, contextTitle }),
+        signal: controller.signal, // Pass the abort signal to the fetch request
       });
 
+      clearTimeout(timeoutId); // The request finished, so we clear the timeout
+
+      const data = await response.json();
+
       if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || `Ocorreu um erro no servidor: ${response.statusText}`);
+        throw new Error(data.error || 'Ocorreu um erro na comunicação com o servidor.');
       }
 
-      if (!response.body) {
-        throw new Error("A resposta do servidor não continha dados para streaming.");
-      }
-
-      const reader = response.body.getReader();
-      const decoder = new TextDecoder();
-      let buffer = '';
-
-      while (true) {
-        const { done, value } = await reader.read();
-        if (done) break;
-
-        buffer += decoder.decode(value, { stream: true });
-        const lines = buffer.split('\n');
-        buffer = lines.pop() || ''; // Keep any partial line in the buffer
-
-        for (const line of lines) {
-          if (line.trim() === '') continue;
-          try {
-            const parsed = JSON.parse(line);
-            if (parsed.error) {
-              throw new Error(parsed.error);
-            }
-            if (parsed.chunk) {
-              setAnswer(prev => prev + parsed.chunk);
-            }
-          } catch (e) {
-            console.warn("Could not parse JSON line from stream:", line);
-          }
-        }
-      }
+      setAnswer(data.answer);
 
     } catch (e: any) {
+      clearTimeout(timeoutId); // Ensure timeout is cleared on error as well
       console.error(e);
       let errorMessage = "Desculpe, não foi possível processar sua pergunta no momento. Tente novamente mais tarde.";
-      if (e.message) {
+
+      if (e.name === 'AbortError') {
+        errorMessage = "A requisição demorou muito para responder (timeout). Por favor, tente novamente.";
+      } else if (e.message && e.message.includes('Failed to fetch')) {
+        errorMessage = "Ocorreu um erro de comunicação com o servidor. Isso pode ser devido a um problema de rede ou o serviço pode estar temporariamente indisponível.";
+      } else if (e.message) {
         errorMessage = e.message;
       }
       setError(errorMessage);
-      setAnswer('');
     } finally {
       setIsLoading(false);
       setQuestion('');
@@ -136,16 +105,17 @@ const AIAssistant: React.FC<AIAssistantProps> = ({ contextTitle }) => {
                 </div>
                 <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg shadow-sm">
                     <p className="font-semibold text-blue-800">Resposta do Assistente:</p>
-                    {isLoading && !answer && (
+                    {isLoading ? (
                         <div className="flex items-center space-x-2 text-gray-500 mt-2">
                             <div className="animate-spin h-5 w-5 border-b-2 border-blue-600 rounded-full"></div>
                             <span>Analisando sua pergunta...</span>
                         </div>
+                    ) : (
+                        <div 
+                            className="prose prose-sm max-w-none mt-2 text-gray-800"
+                            dangerouslySetInnerHTML={{ __html: answer }}
+                        />
                     )}
-                    <div 
-                        className="prose prose-sm max-w-none mt-2 text-gray-800"
-                        dangerouslySetInnerHTML={{ __html: renderedAnswer }}
-                    />
                 </div>
             </div>
         )}

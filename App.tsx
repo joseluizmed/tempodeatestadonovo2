@@ -1,8 +1,6 @@
 
-
-
 import React, { useState, useCallback, useEffect } from 'react';
-import { HashRouter, Routes, Route, Link } from 'react-router-dom';
+import { HashRouter, Routes, Route, Link, useLocation } from 'react-router-dom';
 import { MedicalCertificate, AnalysisResults, DetailedTimelineSegment, Article } from './types';
 import CertificateForm from './components/CertificateForm';
 import AnalysisDisplay from './components/AnalysisDisplay';
@@ -13,7 +11,6 @@ import InssActionCard from './components/InssActionCard';
 import ArticlesListPage from './components/ArticlesListPage';
 import ArticlePage from './components/ArticlePage';
 import ScrollToTop from './components/ScrollToTop';
-import AdManager from './components/AdManager';
 
 // This component is copied from ArticlesListPage to be used on the new HomePage
 const ArticleCard: React.FC<{ article: Article }> = ({ article }) => (
@@ -30,6 +27,39 @@ const ArticleCard: React.FC<{ article: Article }> = ({ article }) => (
     </div>
   </Link>
 );
+
+const MonetagAlternatingAd: React.FC = () => {
+  const location = useLocation();
+
+  useEffect(() => {
+    const AD_ZONES = ['9916510', '9916505'];
+    const SCRIPT_ID = 'monetag-alternating-inpage-push';
+
+    // Decide which ad to show
+    const lastShownZone = sessionStorage.getItem('lastMonetagInPagePush');
+    const nextZone = lastShownZone === AD_ZONES[0] ? AD_ZONES[1] : AD_ZONES[0];
+    sessionStorage.setItem('lastMonetagInPagePush', nextZone);
+    
+    // Create and append the new script
+    const script = document.createElement('script');
+    script.id = SCRIPT_ID;
+    script.async = true;
+    script.dataset.cfasync = 'false';
+    script.src = `https://jsc.monetag.com/${nextZone}/tag.min.js`;
+
+    document.body.appendChild(script);
+
+    // Cleanup function to remove the script when location changes.
+    return () => {
+      const scriptToRemove = document.getElementById(SCRIPT_ID);
+      if (scriptToRemove) {
+        scriptToRemove.remove();
+      }
+    };
+  }, [location.pathname]); // Rerun on every route change
+
+  return null; // This component doesn't render anything
+}
 
 
 const App: React.FC = () => {
@@ -287,22 +317,23 @@ const App: React.FC = () => {
 
   const CalculatorPage = () => {
     useEffect(() => {
-        const PUNCH_IN_ZONE_ID = '9916519';
-        const scriptId = 'monetag-vignette-script';
-
-        const script = document.createElement('script');
-        script.id = scriptId;
-        script.dataset.zone = PUNCH_IN_ZONE_ID;
-        script.src = 'https://groleegni.net/vignette.min.js';
-        
-        document.body.appendChild(script);
-
-        return () => {
-            const scriptOnUnmount = document.getElementById(scriptId);
-            if (scriptOnUnmount) {
-                scriptOnUnmount.remove();
-            }
-        };
+      const scriptId = 'monetag-inpage-push-calculator';
+      if (document.getElementById(scriptId)) {
+          return;
+      }
+      const script = document.createElement('script');
+      script.id = scriptId;
+      script.async = true;
+      script.dataset.cfasync = 'false';
+      script.src = "https://jsc.monetag.com/9916519/tag.min.js";
+      document.body.appendChild(script);
+  
+      return () => {
+          const existingScript = document.getElementById(scriptId);
+          if (existingScript) {
+              existingScript.remove();
+          }
+      };
     }, []);
 
     return (
@@ -366,13 +397,13 @@ const App: React.FC = () => {
           </section>
         </div>
       </>
-    );
+    )
   };
 
   return (
     <HashRouter>
       <ScrollToTop />
-      <AdManager />
+      <MonetagAlternatingAd />
       <div className="flex flex-col min-h-screen bg-gray-50">
         <Header />
         <main className="flex-grow">

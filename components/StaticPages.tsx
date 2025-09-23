@@ -149,74 +149,75 @@ export const ContactPage: React.FC = () => {
 
 export const INSSPage: React.FC<{ onOpenGuide: () => void }> = ({ onOpenGuide }) => {
   useEffect(() => {
-    const PUNCH_IN_ZONE_ID = '9916519';
-    const scriptId = 'monetag-vignette-script';
-
+    const scriptId = 'monetag-inpage-push-inss';
+    if (document.getElementById(scriptId)) {
+        return;
+    }
     const script = document.createElement('script');
     script.id = scriptId;
-    script.dataset.zone = PUNCH_IN_ZONE_ID;
-    script.src = 'https://groleegni.net/vignette.min.js';
-
+    script.async = true;
+    script.dataset.cfasync = 'false';
+    script.src = "https://jsc.monetag.com/9916519/tag.min.js";
     document.body.appendChild(script);
 
     return () => {
-        const scriptOnUnmount = document.getElementById(scriptId);
-        if (scriptOnUnmount) {
-            scriptOnUnmount.remove();
+        const existingScript = document.getElementById(scriptId);
+        if (existingScript) {
+            existingScript.remove();
         }
     };
   }, []);
 
   return (
     <PageContainer title="📄 Benefício por Incapacidade Temporária (Antigo Auxílio-Doença)">
-    <p>O Benefício por Incapacidade Temporária, conhecido anteriormente como Auxílio-Doença, é um direito do trabalhador segurado pelo INSS que se encontra temporariamente incapacitado para suas atividades laborais por motivo de doença ou acidente.</p>
-    
-    <h2 className="text-2xl font-semibold text-gray-800 mt-6 mb-3">✅ Quem tem direito?</h2>
-    <p>Para ter direito ao benefício, o trabalhador precisa cumprir alguns requisitos essenciais:</p>
-    <ul className="list-disc list-inside space-y-2 mt-2">
-      <li><strong>Afastamento superior a 15 dias:</strong> A incapacidade para o trabalho deve ser superior a 15 dias consecutivos. Para empregados de carteira assinada, os primeiros 15 dias são pagos pela empresa, e o INSS é responsável a partir do 16º dia.</li>
-      <li><strong>Qualidade de segurado:</strong> É preciso estar contribuindo para o INSS ou estar no "período de graça" (tempo que mantém a qualidade de segurado mesmo sem contribuir).</li>
-      <li><strong>Carência:</strong> Geralmente, é necessário ter contribuído por no mínimo 12 meses antes do início da incapacidade. Essa carência é dispensada em casos de acidente de qualquer natureza (incluindo o de trabalho) ou de doenças graves especificadas em lei.</li>
-    </ul>
+      <p>O Benefício por Incapacidade Temporária, conhecido anteriormente como Auxílio-Doença, é um direito do trabalhador segurado pelo INSS que se encontra temporariamente incapacitado para suas atividades laborais por motivo de doença ou acidente.</p>
+      
+      <h2 className="text-2xl font-semibold text-gray-800 mt-6 mb-3">✅ Quem tem direito?</h2>
+      <p>Para ter direito ao benefício, o trabalhador precisa cumprir alguns requisitos essenciais:</p>
+      <ul className="list-disc list-inside space-y-2 mt-2">
+        <li><strong>Afastamento superior a 15 dias:</strong> A incapacidade para o trabalho deve ser superior a 15 dias consecutivos. Para empregados de carteira assinada, os primeiros 15 dias são pagos pela empresa, e o INSS é responsável a partir do 16º dia.</li>
+        <li><strong>Qualidade de segurado:</strong> É preciso estar contribuindo para o INSS ou estar no "período de graça" (tempo que mantém a qualidade de segurado mesmo sem contribuir).</li>
+        <li><strong>Carência:</strong> Geralmente, é necessário ter contribuído por no mínimo 12 meses antes do início da incapacidade. Essa carência é dispensada em casos de acidente de qualquer natureza (incluindo o de trabalho) ou de doenças graves especificadas em lei.</li>
+      </ul>
 
-    <h2 className="text-2xl font-semibold text-gray-800 mt-6 mb-3">📋 Documentos Essenciais para a Perícia</h2>
-    <p>A preparação correta da documentação é fundamental para o sucesso do seu pedido. No dia da perícia, leve os seguintes documentos originais:</p>
-    <ul className="list-disc list-inside space-y-2 mt-2">
-      <li>Documento de identificação oficial com foto (RG, CNH).</li>
-      <li>CPF.</li>
-      <li>Carteira de Trabalho e Previdência Social (CTPS), carnês de contribuição ou outros documentos que comprovem o pagamento ao INSS.</li>
-      <li><strong>Documentação Médica:</strong> Atestados, laudos, relatórios e exames recentes que comprovem a sua condição de saúde e a incapacidade para o trabalho. O atestado deve ser legível, conter o CID (Classificação Internacional de Doenças), data, assinatura e carimbo do médico.</li>
-      <li>Comunicação de Acidente de Trabalho (CAT), se o afastamento for decorrente de um acidente de trabalho.</li>
-      <li>Declaração carimbada e assinada do empregador, informando a data do último dia trabalhado (para segurados empregados).</li>
-    </ul>
+      <h2 className="text-2xl font-semibold text-gray-800 mt-6 mb-3">📋 Documentos Essenciais para a Perícia</h2>
+      <p>A preparação correta da documentação é fundamental para o sucesso do seu pedido. No dia da perícia, leve os seguintes documentos originais:</p>
+      <ul className="list-disc list-inside space-y-2 mt-2">
+        <li>Documento de identificação oficial com foto (RG, CNH).</li>
+        <li>CPF.</li>
+        <li>Carteira de Trabalho e Previdência Social (CTPS), carnês de contribuição ou outros documentos que comprovem o pagamento ao INSS.</li>
+        <li><strong>Documentação Médica:</strong> Atestados, laudos, relatórios e exames recentes que comprovem a sua condição de saúde e a incapacidade para o trabalho. O atestado deve ser legível, conter o CID (Classificação Internacional de Doenças), data, assinatura e carimbo do médico.</li>
+        <li>Comunicação de Acidente de Trabalho (CAT), se o afastamento for decorrente de um acidente de trabalho.</li>
+        <li>Declaração carimbada e assinada do empregador, informando a data do último dia trabalhado (para segurados empregados).</li>
+      </ul>
 
-    <div className="mt-8 p-4 rounded-lg bg-blue-50 border-l-4 border-blue-400 text-blue-800">
-      <h3 className="font-bold">Como Agendar sua Perícia?</h3>
-      <p className="mt-2">O agendamento é o primeiro passo para solicitar seu benefício. Você pode fazer isso online pelo portal Meu INSS ou pelo telefone 135. Para facilitar, preparamos um guia passo a passo.</p>
-      <button
-        onClick={onOpenGuide}
-        className="mt-4 bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-md shadow-md transition-transform transform hover:scale-105"
-      >
-        Ver Guia de Agendamento
-      </button>
-    </div>
+      <div className="mt-8 p-4 rounded-lg bg-blue-50 border-l-4 border-blue-400 text-blue-800">
+        <h3 className="font-bold">Como Agendar sua Perícia?</h3>
+        <p className="mt-2">O agendamento é o primeiro passo para solicitar seu benefício. Você pode fazer isso online pelo portal Meu INSS ou pelo telefone 135. Para facilitar, preparamos um guia passo a passo.</p>
+        <button
+          onClick={onOpenGuide}
+          className="mt-4 bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-md shadow-md transition-transform transform hover:scale-105"
+        >
+          Ver Guia de Agendamento
+        </button>
+      </div>
 
-    <h2 className="text-2xl font-semibold text-gray-800 mt-8 mb-3">📱 Acesse pelo Celular</h2>
-    <p>Para facilitar o acesso aos serviços, você também pode baixar o aplicativo oficial Meu INSS no seu smartphone. Com ele, você pode agendar perícias, consultar extratos e muito mais, de forma rápida e segura.</p>
-    <div className="mt-4 flex flex-col sm:flex-row gap-4">
-        <a href="https://play.google.com/store/apps/details?id=br.gov.dataprev.meuinss" target="_blank" rel="noopener noreferrer" className="inline-flex items-center justify-center px-5 py-3 border border-transparent text-base font-medium rounded-md text-white bg-gray-800 hover:bg-gray-900 transition-transform transform hover:scale-105">
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
-            </svg>
-            <span>Disponível no Google Play</span>
-        </a>
-        <a href="https://apps.apple.com/br/app/meu-inss-central-de-servi%C3%A7os/id1243048358" target="_blank" rel="noopener noreferrer" className="inline-flex items-center justify-center px-5 py-3 border border-transparent text-base font-medium rounded-md text-white bg-gray-800 hover:bg-gray-900 transition-transform transform hover:scale-105">
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
-            </svg>
-            <span>Baixar na App Store</span>
-        </a>
-    </div>
-  </PageContainer>
-  );
+      <h2 className="text-2xl font-semibold text-gray-800 mt-8 mb-3">📱 Acesse pelo Celular</h2>
+      <p>Para facilitar o acesso aos serviços, você também pode baixar o aplicativo oficial Meu INSS no seu smartphone. Com ele, você pode agendar perícias, consultar extratos e muito mais, de forma rápida e segura.</p>
+      <div className="mt-4 flex flex-col sm:flex-row gap-4">
+          <a href="https://play.google.com/store/apps/details?id=br.gov.dataprev.meuinss" target="_blank" rel="noopener noreferrer" className="inline-flex items-center justify-center px-5 py-3 border border-transparent text-base font-medium rounded-md text-white bg-gray-800 hover:bg-gray-900 transition-transform transform hover:scale-105">
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+              </svg>
+              <span>Disponível no Google Play</span>
+          </a>
+          <a href="https://apps.apple.com/br/app/meu-inss-central-de-servi%C3%A7os/id1243048358" target="_blank" rel="noopener noreferrer" className="inline-flex items-center justify-center px-5 py-3 border border-transparent text-base font-medium rounded-md text-white bg-gray-800 hover:bg-gray-900 transition-transform transform hover:scale-105">
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+              </svg>
+              <span>Baixar na App Store</span>
+          </a>
+      </div>
+    </PageContainer>
+  )
 };

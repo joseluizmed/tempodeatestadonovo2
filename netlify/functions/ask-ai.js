@@ -1,4 +1,5 @@
 import { GoogleGenAI } from "@google/genai";
+import { marked } from "marked";
 
 export const handler = async (event) => {
   if (event.httpMethod !== 'POST') {
@@ -30,7 +31,7 @@ export const handler = async (event) => {
       userPrompt = `Dentro do contexto do artigo "${contextTitle}", responda à seguinte pergunta: "${question}"`;
     }
 
-    const geminiStream = await ai.models.generateContentStream({
+    const response = await ai.models.generateContent({
         model: 'gemini-2.5-flash',
         contents: userPrompt,
         config: {
@@ -40,44 +41,24 @@ export const handler = async (event) => {
         },
     });
     
-    const encoder = new TextEncoder();
-    const readableStream = new ReadableStream({
-      async start(controller) {
-        try {
-          for await (const chunk of geminiStream) {
-            if (chunk.promptFeedback?.blockReason) {
-              const reason = chunk.promptFeedback.blockReason;
-              console.warn(`Prompt blocked due to ${reason}`, chunk.promptFeedback.safetyRatings);
-              const errorPayload = JSON.stringify({ error: `Sua pergunta foi bloqueada por motivos de segurança (${reason}). Por favor, reformule sua pergunta.` });
-              controller.enqueue(encoder.encode(errorPayload + '\n'));
-              controller.close();
-              return;
-            }
+    // Check for blocked prompts before trying to access the text.
+    if (response.promptFeedback?.blockReason) {
+      const reason = response.promptFeedback.blockReason;
+      console.warn(`Prompt blocked due to ${reason}`, response.promptFeedback.safetyRatings);
+      throw new Error(`Sua pergunta foi bloqueada por motivos de segurança (${reason}). Por favor, reformule sua pergunta.`);
+    }
 
-            const text = chunk.text;
-            if (text) {
-              const payload = JSON.stringify({ chunk: text });
-              controller.enqueue(encoder.encode(payload + '\n'));
-            }
-          }
-          controller.close();
-        } catch (error) {
-            console.error("Error while streaming from Gemini:", error);
-            const errorMessage = error instanceof Error ? error.message : "An unknown error occurred during streaming.";
-            const errorPayload = JSON.stringify({ error: errorMessage });
-            controller.enqueue(encoder.encode(errorPayload + '\n'));
-            controller.close();
-        }
-      }
-    });
-
+    const rawAnswer = response.text;
+    if (!rawAnswer) {
+      throw new Error("A IA retornou uma resposta vazia. Isso pode ser devido a filtros de segurança ou um problema com a pergunta.");
+    }
+    
+    const htmlAnswer = await marked.parse(rawAnswer, { async: true, gfm: true });
+    
     return {
       statusCode: 200,
-      headers: { 
-        'Content-Type': 'application/octet-stream', // Use a generic stream type
-        'Transfer-Encoding': 'chunked',
-      },
-      body: readableStream,
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ answer: htmlAnswer }),
     };
 
   } catch (error) {
