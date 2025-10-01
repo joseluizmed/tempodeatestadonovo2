@@ -1,6 +1,6 @@
 
 import React, { useState, useCallback, useEffect } from 'react';
-import { HashRouter, Routes, Route, Link, useLocation } from 'react-router-dom';
+import { HashRouter, Routes, Route, Link } from 'react-router-dom';
 import { MedicalCertificate, AnalysisResults, DetailedTimelineSegment, Article } from './types';
 import CertificateForm from './components/CertificateForm';
 import AnalysisDisplay from './components/AnalysisDisplay';
@@ -11,6 +11,7 @@ import InssActionCard from './components/InssActionCard';
 import ArticlesListPage from './components/ArticlesListPage';
 import ArticlePage from './components/ArticlePage';
 import ScrollToTop from './components/ScrollToTop';
+import AIAssistantModal from './components/AIAssistantModal';
 
 // This component is copied from ArticlesListPage to be used on the new HomePage
 const ArticleCard: React.FC<{ article: Article }> = ({ article }) => (
@@ -28,39 +29,6 @@ const ArticleCard: React.FC<{ article: Article }> = ({ article }) => (
   </Link>
 );
 
-const MonetagAlternatingAd: React.FC = () => {
-  const location = useLocation();
-
-  useEffect(() => {
-    const AD_ZONES = ['9916510', '9916505'];
-    const SCRIPT_ID = 'monetag-alternating-inpage-push';
-
-    // Decide which ad to show
-    const lastShownZone = sessionStorage.getItem('lastMonetagInPagePush');
-    const nextZone = lastShownZone === AD_ZONES[0] ? AD_ZONES[1] : AD_ZONES[0];
-    sessionStorage.setItem('lastMonetagInPagePush', nextZone);
-    
-    // Create and append the new script
-    const script = document.createElement('script');
-    script.id = SCRIPT_ID;
-    script.async = true;
-    script.dataset.cfasync = 'false';
-    script.src = `https://jsc.monetag.com/${nextZone}/tag.min.js`;
-
-    document.body.appendChild(script);
-
-    // Cleanup function to remove the script when location changes.
-    return () => {
-      const scriptToRemove = document.getElementById(SCRIPT_ID);
-      if (scriptToRemove) {
-        scriptToRemove.remove();
-      }
-    };
-  }, [location.pathname]); // Rerun on every route change
-
-  return null; // This component doesn't render anything
-}
-
 
 const App: React.FC = () => {
   const [rawCertificates, setRawCertificates] = useState<MedicalCertificate[]>([]);
@@ -68,6 +36,7 @@ const App: React.FC = () => {
   const [analysisResults, setAnalysisResults] = useState<AnalysisResults | null>(null);
   const [editingCertificateId, setEditingCertificateId] = useState<string | null>(null);
   const [isGuideModalOpen, setGuideModalOpen] = useState(false);
+  const [isAiModalOpen, setAiModalOpen] = useState(false);
 
   useEffect(() => {
     // If there are no certificates, reset the state and do nothing.
@@ -248,7 +217,7 @@ const App: React.FC = () => {
                 <p className="mt-4 text-lg text-gray-600 max-w-3xl mx-auto">Explore nossas ferramentas e seções para encontrar as informações que você precisa sobre atestados, perícia médica e seus direitos no INSS.</p>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+            <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-8">
                 {/* Card 1: Calculadora */}
                 <div className="bg-white p-6 rounded-lg shadow-lg border border-gray-200 text-center flex flex-col hover:shadow-xl transition-shadow duration-300">
                     <div className="text-blue-600 mb-4">
@@ -277,7 +246,21 @@ const App: React.FC = () => {
                     </Link>
                 </div>
 
-                {/* Card 3: Benefícios */}
+                {/* Card 3: IA Perícia */}
+                <div className="bg-white p-6 rounded-lg shadow-lg border border-gray-200 text-center flex flex-col hover:shadow-xl transition-shadow duration-300">
+                    <div className="text-blue-600 mb-4">
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-12 w-12 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M12 6V3m0 18v-3M5.636 5.636l-1.414-1.414M18.364 18.364l-1.414-1.414M5.636 18.364l-1.414 1.414M18.364 5.636l-1.414 1.414M9 12a3 3 0 116 0 3 3 0 01-6 0z" />
+                        </svg>
+                    </div>
+                    <h3 className="text-xl font-semibold text-gray-800 mb-2">IA Perícia</h3>
+                    <p className="text-gray-600 flex-grow">Tire suas dúvidas instantaneamente com nossa assistente virtual especialista.</p>
+                    <button onClick={() => setAiModalOpen(true)} className="mt-6 inline-block bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-md shadow-md transition duration-150 transform hover:scale-105">
+                        Conversar com a IA
+                    </button>
+                </div>
+
+                {/* Card 4: Benefícios */}
                 <div className="bg-white p-6 rounded-lg shadow-lg border border-gray-200 text-center flex flex-col hover:shadow-xl transition-shadow duration-300">
                     <div className="text-blue-600 mb-4">
                         <svg xmlns="http://www.w3.org/2000/svg" className="h-12 w-12 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
@@ -291,7 +274,7 @@ const App: React.FC = () => {
                     </Link>
                 </div>
 
-                {/* Card 4: Sobre */}
+                {/* Card 5: Sobre */}
                 <div className="bg-white p-6 rounded-lg shadow-lg border border-gray-200 text-center flex flex-col hover:shadow-xl transition-shadow duration-300">
                     <div className="text-blue-600 mb-4">
                         <svg xmlns="http://www.w3.org/2000/svg" className="h-12 w-12 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
@@ -315,95 +298,72 @@ const App: React.FC = () => {
     </>
   );
 
-  const CalculatorPage = () => {
-    useEffect(() => {
-      const scriptId = 'monetag-inpage-push-calculator';
-      if (document.getElementById(scriptId)) {
-          return;
-      }
-      const script = document.createElement('script');
-      script.id = scriptId;
-      script.async = true;
-      script.dataset.cfasync = 'false';
-      script.src = "https://jsc.monetag.com/9916519/tag.min.js";
-      document.body.appendChild(script);
-  
-      return () => {
-          const existingScript = document.getElementById(scriptId);
-          if (existingScript) {
-              existingScript.remove();
-          }
-      };
-    }, []);
-
-    return (
-      <>
-        <div className="container mx-auto px-2 sm:px-4 py-8">
-          <h1 className="text-3xl md:text-4xl font-bold text-gray-800 mb-8 text-center">Calculadora de Tempo de Afastamento por Atestado Médico</h1>
-          <div className="flex flex-col lg:flex-row gap-8">
-            <div className="lg:w-1/3">
-              <CertificateForm 
-                onSaveCertificate={handleSaveCertificate}
-                editingCertificate={certificateToEdit || null}
-                onCancelEdit={handleCancelEdit}
+  const CalculatorPage = () => (
+    <>
+      <div className="container mx-auto px-2 sm:px-4 py-8">
+        <h1 className="text-3xl md:text-4xl font-bold text-gray-800 mb-8 text-center">Calculadora de Tempo de Afastamento por Atestado Médico</h1>
+        <div className="flex flex-col lg:flex-row gap-8">
+          <div className="lg:w-1/3">
+            <CertificateForm 
+              onSaveCertificate={handleSaveCertificate}
+              editingCertificate={certificateToEdit || null}
+              onCancelEdit={handleCancelEdit}
+            />
+          </div>
+          <div className="lg:w-2/3">
+            <div className="space-y-8">
+              <AnalysisDisplay
+                certificates={processedCertificatesForDisplay} 
+                analysisResults={analysisResults}
+                onRemoveCertificate={handleRemoveCertificate}
+                onEditCertificate={handleStartEdit}
+                onNewAnalysis={handleNewAnalysis}
+              />
+              <InssActionCard 
+                analysisResults={analysisResults} 
+                onOpenGuide={() => setGuideModalOpen(true)} 
               />
             </div>
-            <div className="lg:w-2/3">
-              <div className="space-y-8">
-                <AnalysisDisplay
-                  certificates={processedCertificatesForDisplay} 
-                  analysisResults={analysisResults}
-                  onRemoveCertificate={handleRemoveCertificate}
-                  onEditCertificate={handleStartEdit}
-                  onNewAnalysis={handleNewAnalysis}
-                />
-                <InssActionCard 
-                  analysisResults={analysisResults} 
-                  onOpenGuide={() => setGuideModalOpen(true)} 
-                />
-              </div>
-            </div>
           </div>
-          
-          <section className="mt-12 py-8 px-6 bg-white shadow-lg rounded-lg border border-gray-200">
-            <h2 className="text-2xl font-semibold text-gray-700 mb-6 pb-3 border-b border-gray-300">🧭 Informações sobre o uso da ferramenta</h2>
-            <div className="prose prose-lg max-w-none text-gray-700 space-y-4">
-                <p>Esta aplicação foi desenvolvida para facilitar o cálculo e a visualização dos períodos de afastamento médico de forma clara e automatizada. O uso é simples e intuitivo, pensado para atender tanto o público geral quanto profissionais da área.</p>
-                
-                <h3>🔹 Como utilizar</h3>
-                <ul>
-                    <li><strong>Adicionar/Editar Atestado:</strong> Informe a data de início e, em seguida, escolha entre indicar a data de término ou a quantidade de dias de afastamento. Clique em "Adicionar" ou pressione a tecla "Enter" para incluir um novo atestado ou "Salvar Alterações" para atualizar um registro existente.</li>
-                    <li><strong>Análise Automática:</strong> Os dados são processados automaticamente, exibindo o total de dias, o maior afastamento contínuo e a visualização na linha do tempo.</li>
-                    <li>
-                        <strong>Linha do Tempo:</strong>
-                        <ul>
-                            <li>🟩 Verde – Dias cobertos por um único atestado.</li>
-                            <li>🟨 Amarelo – Dias com sobreposição de atestados.</li>
-                            <li>🟥 Vermelho – Dias não cobertos entre afastamentos.</li>
-                            <li>🔷 Borda Azul – Indica o maior afastamento contínuos.</li>
-                        </ul>
-                    </li>
-                    <li><strong>Atestados Registrados:</strong> Visualize todos os atestados em uma tabela interativa, com opção de edição ou exclusão. A classificação (Contínuo, Não Contínuo etc.) é gerada com base na ordem cronológica.</li>
-                    <li><strong>Nova Análise:</strong> Clique neste botão para limpar os dados e iniciar uma nova simulação.</li>
-                </ul>
-
-                <h3>⚠️ Atenção</h3>
-                <ul>
-                    <li>O cálculo inclui tanto a data de início quanto a de término. Exemplo: 01/01 a 05/01 = 5 dias.</li>
-                    <li>A continuidade considera atestados que se sucedem sem interrupção entre as datas.</li>
-                    <li>Esta ferramenta tem caráter informativo e não substitui a análise de profissionais especializados (como médicos peritos, setores de RH ou assessoria jurídica). Normas específicas podem variar conforme o contexto e a legislação vigente.</li>
-                </ul>
-            </div>
-          </section>
         </div>
-      </>
-    )
-  };
+        
+        <section className="mt-12 py-8 px-6 bg-white shadow-lg rounded-lg border border-gray-200">
+          <h2 className="text-2xl font-semibold text-gray-700 mb-6 pb-3 border-b border-gray-300">🧭 Informações sobre o uso da ferramenta</h2>
+          <div className="prose prose-lg max-w-none text-gray-700 space-y-4">
+              <p>Esta aplicação foi desenvolvida para facilitar o cálculo e a visualização dos períodos de afastamento médico de forma clara e automatizada. O uso é simples e intuitivo, pensado para atender tanto o público geral quanto profissionais da área.</p>
+              
+              <h3>🔹 Como utilizar</h3>
+              <ul>
+                  <li><strong>Adicionar/Editar Atestado:</strong> Informe a data de início e, em seguida, escolha entre indicar a data de término ou a quantidade de dias de afastamento. Clique em "Adicionar" ou pressione a tecla "Enter" para incluir um novo atestado ou "Salvar Alterações" para atualizar um registro existente.</li>
+                  <li><strong>Análise Automática:</strong> Os dados são processados automaticamente, exibindo o total de dias, o maior afastamento contínuo e a visualização na linha do tempo.</li>
+                  <li>
+                      <strong>Linha do Tempo:</strong>
+                      <ul>
+                          <li>🟩 Verde – Dias cobertos por um único atestado.</li>
+                          <li>🟨 Amarelo – Dias com sobreposição de atestados.</li>
+                          <li>🟥 Vermelho – Dias não cobertos entre afastamentos.</li>
+                          <li>🔷 Borda Azul – Indica o maior afastamento contínuos.</li>
+                      </ul>
+                  </li>
+                  <li><strong>Atestados Registrados:</strong> Visualize todos os atestados em uma tabela interativa, com opção de edição ou exclusão. A classificação (Contínuo, Não Contínuo etc.) é gerada com base na ordem cronológica.</li>
+                  <li><strong>Nova Análise:</strong> Clique neste botão para limpar os dados e iniciar uma nova simulação.</li>
+              </ul>
+
+              <h3>⚠️ Atenção</h3>
+              <ul>
+                  <li>O cálculo inclui tanto a data de início quanto a de término. Exemplo: 01/01 a 05/01 = 5 dias.</li>
+                  <li>A continuidade considera atestados que se sucedem sem interrupção entre as datas.</li>
+                  <li>Esta ferramenta tem caráter informativo e não substitui a análise de profissionais especializados (como médicos peritos, setores de RH ou assessoria jurídica). Normas específicas podem variar conforme o contexto e a legislação vigente.</li>
+              </ul>
+          </div>
+        </section>
+      </div>
+    </>
+  );
 
   return (
     <HashRouter>
       <ScrollToTop />
-      <MonetagAlternatingAd />
       <div className="flex flex-col min-h-screen bg-gray-50">
         <Header />
         <main className="flex-grow">
@@ -422,6 +382,11 @@ const App: React.FC = () => {
         <InssGuideModal 
           isOpen={isGuideModalOpen} 
           onClose={() => setGuideModalOpen(false)} 
+        />
+
+        <AIAssistantModal 
+          isOpen={isAiModalOpen} 
+          onClose={() => setAiModalOpen(false)} 
         />
 
         <footer className="bg-gray-800 text-gray-300 text-center py-8">
